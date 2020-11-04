@@ -3,12 +3,16 @@ let App = {
 
   signup: function(data) {
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
-      .then(function() {})
+      .then(function() {
+        redirect('profile/user-profile');
+      })
       .catch(function(error) {});
   },
   signin: function(data) {
     firebase.auth().signInWithEmailAndPassword(data.email, data.password)
-      .then(function() {})
+      .then(function() {
+        redirect('profile/user-profile');
+      })
       .catch(function(error) {});
   },
   signinGoogle: function() {},
@@ -26,7 +30,6 @@ let App = {
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         this.user = user;
-        redirect('profile/user-profile');
         if (user.photoURL) {
           this.toggleNavUserLoggedInWithPhoto();
         } else {
@@ -92,11 +95,12 @@ let App = {
 };
 
 $(function() {
-  App.init();
+  window.app = App.init();
 });
 
 function redirect(path) {
   if (location.pathname !== path) {
+    console.log('redirecting from ' + location.pathname + ' to ' + path);
     location.pathname = path;
   }
 }
