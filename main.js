@@ -27,7 +27,6 @@ let App = {
       if (user) {
         this.user = user;
         redirect('profile/user-profile');
-        this.$loginButton.toggle(false);
         if (user.photoURL) {
           this.toggleNavUserLoggedInWithPhoto();
         } else {
@@ -38,23 +37,25 @@ let App = {
         redirect('/');
         this.toggleNavUserLoggedOut();
       }
-    });
+    }.bind(this));
+  },
+  toggleNavUserLoggedInWithPhoto: function() {
+    this.$loginButton.toggle(false);
+    // set pic in profile avatar button
+    this.$profileAvatarButton.toggle(true);
+    this.$profileNameButton.toggle(false);
+  },
+  toggleNavUserLoggedInWithoutPhoto: function() {
+    this.$loginButton.toggle(false);
+    // set name in profile name button
+    this.$profileAvatarButton.toggle(false);
+    this.$profileNameButton.toggle(true);
   },
   toggleNavUserLoggedOut: function() {
     // remove photourl and user first name from elements
     this.$profileAvatarButton.toggle(false);
     this.$profileNameButton.toggle(false);
     this.$loginButton.toggle(true);
-  },
-  toggleNavUserLoggedInWithPhoto: function() {
-    // set pic in profile avatar button
-    this.$profileAvatarButton.toggle(true);
-    this.$profileNameButton.toggle(false);
-  },
-  toggleNavUserLoggedInWithoutPhoto: function() {
-    // set name in profile name button
-    this.$profileAvatarButton.toggle(false);
-    this.$profileNameButton.toggle(true);
   },
 
   bindElements: function() {
@@ -86,9 +87,11 @@ let App = {
 };
 
 $(function() {
-  // App.init();
+  App.init();
 });
 
 function redirect(path) {
-  location.pathname = path;
+  if (location.pathname !== path) {
+    location.pathname = path;
+  }
 }
