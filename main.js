@@ -57,20 +57,19 @@ let App = {
   toggleNavUserLoggedInWithPhoto: function() {
     this.$loginButton.toggle(false);
     // set pic in profile avatar button
-    this.$profileAvatarButton.toggle(true);
-    this.$profileNameButton.toggle(false);
+    this.$profileNameButton.text(this.userFirstName() || this.userEmail());
+    this.$profileAvatarNameSection.toggle(true);
   },
   toggleNavUserLoggedInWithoutPhoto: function() {
     this.$loginButton.toggle(false);
     // load a default placeholder photo as avatar
-    this.$profileAvatarButton.toggle(true);
     this.$profileNameButton.text(this.userFirstName() || this.userEmail());
-    this.$profileNameButton.toggle(true);
+    this.$profileAvatarNameSection.toggle(true);
   },
   toggleNavUserLoggedOut: function() {
     // remove photourl and user first name from elements
-    this.$profileAvatarButton.toggle(false);
-    this.$profileNameButton.toggle(false);
+    this.$profileNameButton.text('');
+    this.$profileAvatarNameSection.toggle(false);
     this.$loginButton.toggle(true);
   },
 
@@ -126,23 +125,26 @@ let App = {
     this.$editBio = $('#edit-bio');
   },
   bindEventListeners: function() {
-    // this.$signupForm.submit();
+    this.$signupForm.submit(this.handleSignup.bind(this));
     this.$signinForm.submit(this.handleSignin.bind(this));
-    this.$editProfileForm.submit(this.handleProfileEdit.bind(this));
+    // this.$editProfileForm.submit(this.handleProfileEdit.bind(this));
   },
 
   handleSignup: function(event) {
     event.preventDefault();
-
     let data = {
       email: $('#signupEmail').val(),
       password: $('#signupPassword').val(),
     };
-
     this.signup(data);
   },
   handleSignin: function(event) {
     event.preventDefault();
+    let data = {
+      email: $('#signinEmail').val(),
+      password: $('#signinPassword').val(),
+    };
+    this.signup(data);
   },
   handleProfileEdit: function(event) {
     event.preventDefault();
