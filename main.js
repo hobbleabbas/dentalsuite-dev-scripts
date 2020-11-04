@@ -80,7 +80,6 @@ let App = {
   init: function() {
     this.bindElements();
     this.bindEventListeners();
-    this.bindEventHandlers();
     this.setAuthStateListener();
     return this;
   },
