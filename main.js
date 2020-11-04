@@ -132,6 +132,7 @@ let App = {
 
   handleSignup: function(event) {
     event.preventDefault();
+    event.stopPropagation();
     let data = {
       email: $('#signupEmail').val(),
       password: $('#signupPassword').val(),
@@ -140,17 +141,19 @@ let App = {
   },
   handleSignin: function(event) {
     event.preventDefault();
+    event.stopPropagation();
     let data = {
       email: $('#signinEmail').val(),
       password: $('#signinPassword').val(),
     };
-    this.signup(data);
+    this.signin(data);
   },
-  handleProfileEdit: function(event) {
-    event.preventDefault();
-    let data = getEditProfileData();
+  // handleProfileEdit: function(event) {
+  //   event.preventDefault();
+  //   event.stopPropagation();
+  //   let data = getEditProfileData();
     
-  },
+  // },
 
   init: function() {
     this.bindElements();
