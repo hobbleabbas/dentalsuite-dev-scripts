@@ -2,7 +2,10 @@ let App = {
   user: null,
 
   userFirstName: function() {
-    return this.user.displayName.split(' ')[0];
+    let displayName = this.user.displayName
+    if (displayName) {
+      return displayName.split(' ')[0];
+    }
   },
   userEmail: function() {
     return this.user.email;
