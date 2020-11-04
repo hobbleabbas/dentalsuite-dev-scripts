@@ -34,10 +34,15 @@ let App = {
         }
       } else {
         this.user = null;
-        redirect('/');
+        this.authGuardProfile();
         this.toggleNavUserLoggedOut();
       }
     }.bind(this));
+  },
+  authGuardProfile: function() {
+    if (location.pathname.includes('profile') && !this.user) {
+      redirect('/');
+    }
   },
   toggleNavUserLoggedInWithPhoto: function() {
     this.$loginButton.toggle(false);
