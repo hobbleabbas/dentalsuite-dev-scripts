@@ -86,7 +86,7 @@ let App = {
 };
 
 $(function() {
-  App.init();
+  // App.init();
 });
 
 function redirect(path) {
