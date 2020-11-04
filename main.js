@@ -4,6 +4,9 @@ let App = {
   userFirstName: function() {
     return this.user.displayName.split(' ')[0];
   },
+  userEmail: function() {
+    return this.user.email;
+  },
 
   signup: function(data) {
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
@@ -58,7 +61,7 @@ let App = {
     this.$loginButton.toggle(false);
     // load a default placeholder photo as avatar
     this.$profileAvatarButton.toggle(true);
-    this.$profileNameButton.text(this.userFirstName());
+    this.$profileNameButton.text(this.userFirstName() || this.userEmail());
     this.$profileNameButton.toggle(true);
   },
   toggleNavUserLoggedOut: function() {
