@@ -1,26 +1,23 @@
-var App = {
+let App = {
   user: null,
 
   signup: function(data) {
-    let email = $('#signupEmail').val();
-    let password = $('#signupPassword').val();
-
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-      .then(function() {
-        // take to profile page?
-      })
-      .catch(function(error) {
-
-      });
+    firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
+      .then(function() {})
+      .catch(function(error) {});
   },
-  signin: function(data) {},
+  signin: function(data) {
+    firebase.auth().signInWithEmailAndPassword(data.email, data.password)
+      .then(function() {})
+      .catch(function(error) {});
+  },
   signinGoogle: function() {},
   signout: function() {
     firebase.auth().signOut();
   },
 
   putInStorage: function(uid, file) {},
-  getFromStorage: function(uid, what) {},
+  getFromStorage: function(uid, list) {},
 
   putInDatabase: function(uid, data) {},
   getFromDatabase: function(uid, list) {},
@@ -29,23 +26,70 @@ var App = {
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         this.user = user;
+        redirect('profile/user-profile');
+        this.$loginButton.toggle(false);
+        if (user.photoURL) {
+          this.toggleNavUserLoggedInWithPhoto();
+        } else {
+          this.toggleNavUserLoggedInWithoutPhoto();
+        }
       } else {
         this.user = null;
+        redirect('/');
+        this.toggleNavUserLoggedOut();
       }
     });
   },
+  toggleNavUserLoggedOut: function() {
+    // remove photourl and user first name from elements
+    this.$profileAvatarButton.toggle(false);
+    this.$profileNameButton.toggle(false);
+    this.$loginButton.toggle(true);
+  },
+  toggleNavUserLoggedInWithPhoto: function() {
+    // set pic in profile avatar button
+    this.$profileAvatarButton.toggle(true);
+    this.$profileNameButton.toggle(false);
+  },
+  toggleNavUserLoggedInWithoutPhoto: function() {
+    // set name in profile name button
+    this.$profileAvatarButton.toggle(false);
+    this.$profileNameButton.toggle(true);
+  },
 
-  bindElements: function() {},
-  bindEventListeners: function() {},
-  bindEventHandlers: function() {},
+  bindElements: function() {
+    this.$loginButton = $('#login-button');
+    this.$profileAvatarButton = $('#profile-avatar-button');
+    this.$profileNameButton = $('#profile-name-button')
+  },
+  bindEventListeners: function() {
+
+  },
+
+  handleSignup: function(event) {
+    event.preventDefault();
+
+    let data = {
+      email: $('#signupEmail').val(),
+      password: $('#signupPassword').val(),
+    };
+
+    this.signup(data);
+  },
+
   init: function() {
-    this.setAuthStateListener();
     this.bindElements();
     this.bindEventListeners();
     this.bindEventHandlers();
+    this.setAuthStateListener();
+    return this;
   },
 };
 
 $(function() {
   App.init();
 });
+
+function redirect(path) {
+  location.pathname = path;
+}
