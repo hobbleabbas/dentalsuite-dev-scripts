@@ -124,8 +124,8 @@ let App = {
   },
   bindEventListeners: function() {
     // this.$signupForm.submit();
-    this.$signinForm.submit(handleSignin.bind(this));
-    this.$editProfileForm.submit(handleProfileEdit.bind(this));
+    this.$signinForm.submit(this.handleSignin.bind(this));
+    this.$editProfileForm.submit(this.handleProfileEdit.bind(this));
   },
 
   handleSignup: function(event) {
