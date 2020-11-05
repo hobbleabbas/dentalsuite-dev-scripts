@@ -212,8 +212,8 @@ let App = {
     this.$signoutButton = $('.link-logout');
   },
   bindEventListeners: function() {
-    this.$signupForm.submit(this.handleSignup.bind(this));
-    this.$signinForm.submit(this.handleSignin.bind(this));
+    this.$signupForm.get(0).addEventListener('submit', this.handleSignup.bind(this), true);
+    this.$signinForm.get(0).addEventListener('submit', this.handleSignin.bind(this), true);
     this.$signinGoogleButton.click(this.handleGoogleSignin.bind(this));
     this.$editProfileForm.submit(this.handleProfileEdit.bind(this));
     this.$signoutButton.click(this.handleSignout.bind(this));
