@@ -139,11 +139,10 @@ let App = {
   },
   loadProfileEdit: function() {
     let data = this.userData;
-    let names = this.user.displayName.split(' ');
-    let firstName = names[0];
-    let lastName = names[1];
-    this.$editFirstName.val(firstName);
-    this.$editLastName.val(lastName);
+    let displayName = this.user.displayName;
+    let names = displayName ? displayName.split(' ') : ['', ''];
+    this.$editFirstName.val(names[0]);
+    this.$editLastName.val(names[1]);
     this.$editBirthdateDay.val(data['birthdate-day']);
     this.$editBirthdateMonth.val(data['birthdate-month']);
     this.$editBirthdateYear.val(data['birthdate-year']);
