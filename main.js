@@ -30,11 +30,34 @@ let App = {
     this.$signupError.text(error.message);
   },
 
-  putFileInStorage: function(uid, file) {},
-  getFileFromStorage: function(uid, list) {},
+  updateProfile: function(data) {
+    this.user.updateProfile(data)
+      .catch(handleError);
+  },
 
-  putDataInDatabase: function(uid, data) {},
-  getDataFromDatabase: function(uid, list) {},
+  putFileInStorage: function(file) {
+    let storageRef = firebase.storage().ref();
+    let path = `avatars/${this.user.uid}`;
+    let avatarRef = storageRef.child(path);
+    avatarRef.put(file).then(function(snapshot) {
+      avatarRef.getDownloadURL().then(function(url) {
+        // set profile picture or refresh page?
+        this.updateProfile({photoURL: url});
+      }.bind(this)).catch(handleError);
+    }.bind(this)).catch(handleError);
+  },
+  getFileFromStorage: function(list) {},
+
+  putDataInDatabase: function(data) {
+    let dbRef = firebase.database().ref('users/' + this.user.uid);
+    dbRef.set(data);
+  },
+  // getDataFromDatabase: function() {
+  //   let dbRef = firebase.database().ref('users/' + this.user.uid);
+  //   dbRef.once('value').then(snapshot => {
+  //     this.userData = snapshot.val() || {};
+  //   }).catch(handleError);
+  // },
 
   setAuthStateListener: function() {
     firebase.auth().onAuthStateChanged(function(user) {
@@ -114,7 +137,7 @@ let App = {
 
     // profile edit
     this.$editProfileForm = $('wf-form-profile');
-    this.$editPhotoUpload = $('#edit-photo-upload');
+    this.$editPhotoUpload = $('#edit-profile-photo');
     this.$editFirstName = $('#edit-first-name');
     this.$editLastName = $('#edit-last-name');
     this.$editBirthdateDay = $('#edit-birthdate-day');
@@ -131,7 +154,7 @@ let App = {
   bindEventListeners: function() {
     this.$signupForm.submit(this.handleSignup.bind(this));
     this.$signinForm.submit(this.handleSignin.bind(this));
-    // this.$editProfileForm.submit(this.handleProfileEdit.bind(this));
+    this.$editProfileForm.submit(this.handleProfileEdit.bind(this));
   },
 
   handleSignup: function(event) {
@@ -152,12 +175,32 @@ let App = {
     };
     this.signin(data);
   },
-  // handleProfileEdit: function(event) {
-  //   event.preventDefault();
-  //   event.stopPropagation();
-  //   let data = getEditProfileData();
-    
-  // },
+  handleProfileEdit: function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    let form = event.currentTarget;
+    let data = getFormData(form);
+    this.extractAndProcessPhotoFromFormData(data);
+    this.extractAndProcessUsernameFromFormData(data);
+    this.putDataInDatabase(data);
+  },
+  extractAndProcessPhotoFromFormData: function(data) {
+    if (data['photo-upload'].name) {
+      let file = data['photo-upload'];
+      this.putFileInStorage(file);
+      delete data['photo-upload'];
+    }
+  },
+  extractAndProcessUsernameFromFormData: function(data) {
+    if (data['first-name'] || data['last-name']) {
+      let first = data['first-name'].trim(),
+          last = data['last-name'].trim();
+      let username = first + ' ' + last;
+      this.updateProfile({displayName: username});
+      delete data['first-name'];
+      delete data['last-name'];
+    }
+  },
 
   init: function() {
     this.bindElements();
@@ -171,6 +214,10 @@ $(function() {
   window.app = App.init(); // just for development
   // App.init();  // production
 });
+
+function handleError(error) {
+  console.error(error);
+}
 
 function redirect(path) {
   if (location.pathname !== path) {
@@ -190,4 +237,15 @@ function redirectToProfile() {
 function logError(error) {
   console.error('Error code: ' + error.code);
   console.error('Error message: ' + error.message);
+}
+
+function getFormData(form) {
+  let formData = new FormData(form);
+  let data = {};
+  for (var pair of formData.entries()) {
+    let key = pair[0],
+        value = pair[1];
+    data[key] = value;
+  }
+  return data;
 }
