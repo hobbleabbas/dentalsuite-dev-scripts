@@ -201,16 +201,22 @@ let App = {
     this.$editInstagramUrl = $('#edit-instagram-url');
     this.$editTwitterUrl = $('#edit-twitter-url');
     this.$editBio = $('#edit-bio');
+
+    this.$signoutButton = $('.link-logout');
   },
   bindEventListeners: function() {
     this.$signupForm.submit(this.handleSignup.bind(this));
     this.$signinForm.submit(this.handleSignin.bind(this));
     this.$editProfileForm.submit(this.handleProfileEdit.bind(this));
+    this.$signoutButton.click(this.handleSignout.bind(this));
   },
 
+  handleSignout: function(event) {
+    event.preventDefault();
+    this.signout();
+  },
   handleSignup: function(event) {
     event.preventDefault();
-    event.stopPropagation();
     let data = {
       email: $('#signupEmail').val(),
       password: $('#signupPassword').val(),
@@ -219,7 +225,6 @@ let App = {
   },
   handleSignin: function(event) {
     event.preventDefault();
-    event.stopPropagation();
     let data = {
       email: $('#signinEmail').val(),
       password: $('#signinPassword').val(),
@@ -228,7 +233,6 @@ let App = {
   },
   handleProfileEdit: function(event) {
     event.preventDefault();
-    event.stopPropagation();
     let form = event.currentTarget;
     let data = getFormData(form);
     this.extractAndProcessPhotoFromFormData(data);
