@@ -1,4 +1,4 @@
-DEFAULT_PROFILE_PHOTO_URL = 'https://i.imgur.com/mCHMpLT.png';
+DEFAULT_PROFILE_PHOTO_URL = 'https://firebasestorage.googleapis.com/v0/b/dentalsuite-7521f.appspot.com/o/default-photo.png?alt=media&token=375826ab-c96f-4046-80a5-b0bb9b941823';
 
 let App = {
   user: null,
