@@ -253,7 +253,7 @@ let App = {
     this.bindElements();
     this.bindEventListeners();
     this.setAuthStateListener();
-    this.getDataFromDatabase.then(snapshot => {
+    this.getDataFromDatabase().then(snapshot => {
       this.userData = snapshot.val() || {};
       this.loadPageData();
     }).catch(handleError);
