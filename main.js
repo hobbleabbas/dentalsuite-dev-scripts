@@ -23,7 +23,14 @@ let App = {
       .then(redirectToProfile)
       .catch(logError);
   },
-  signinGoogle: function() {},
+  signinGoogle: function() {
+    var provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider)
+      .then(function(result) {
+        this.user = result.user;
+        redirectToProfile();
+      }.bind(this)).catch(logError);
+  },
   signout: function() {
     firebase.auth().signOut();
     redirectToHome();
@@ -34,7 +41,7 @@ let App = {
 
   updateProfile: function(data) {
     this.user.updateProfile(data)
-      .catch(handleError);
+      .catch(logError);
   },
 
   putFileInStorage: function(file) {
@@ -45,8 +52,8 @@ let App = {
       avatarRef.getDownloadURL().then(function(url) {
         this.updateProfile({photoURL: url});
         location.reload();
-      }.bind(this)).catch(handleError);
-    }.bind(this)).catch(handleError);
+      }.bind(this)).catch(logError);
+    }.bind(this)).catch(logError);
   },
   putDataInDatabase: function(data) {
     let dbRef = firebase.database().ref('users/' + this.user.uid);
@@ -69,7 +76,7 @@ let App = {
         this.getDataFromDatabase().then(snapshot => {
           this.userData = snapshot.val() || {};
           this.loadPageData();
-        }).catch(handleError);
+        }).catch(logError);
       } else {
         this.user = null;
         this.authGuardProfile();
@@ -270,10 +277,6 @@ $(function() {
   // App.init();  // production
 });
 
-function handleError(error) {
-  console.error(error);
-}
-
 function redirect(path) {
   if (location.pathname !== path) {
     console.log('redirecting from ' + location.pathname + ' to ' + path);
@@ -290,8 +293,12 @@ function redirectToProfile() {
 }
 
 function logError(error) {
-  console.error('Error code: ' + error.code);
-  console.error('Error message: ' + error.message);
+  if (error.code && error.message) {
+    console.error('Error code: ' + error.code);
+    console.error('Error message: ' + error.message);
+  } else {
+    console.error(error);
+  }
 }
 
 function getFormData(form) {
