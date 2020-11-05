@@ -66,6 +66,10 @@ let App = {
         } else {
           this.toggleNavUserLoggedInWithoutPhoto();
         }
+        this.getDataFromDatabase().then(snapshot => {
+          this.userData = snapshot.val() || {};
+          this.loadPageData();
+        }).catch(handleError);
       } else {
         this.user = null;
         this.authGuardProfile();
@@ -253,10 +257,6 @@ let App = {
     this.bindElements();
     this.bindEventListeners();
     this.setAuthStateListener();
-    this.getDataFromDatabase().then(snapshot => {
-      this.userData = snapshot.val() || {};
-      this.loadPageData();
-    }).catch(handleError);
     return this;
   },
 };
