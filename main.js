@@ -43,23 +43,19 @@ let App = {
     let avatarRef = storageRef.child(path);
     avatarRef.put(file).then(function(snapshot) {
       avatarRef.getDownloadURL().then(function(url) {
-        // set profile picture or refresh page?
         this.updateProfile({photoURL: url});
+        location.reload();
       }.bind(this)).catch(handleError);
     }.bind(this)).catch(handleError);
   },
-  getFileFromStorage: function(list) {},
-
   putDataInDatabase: function(data) {
     let dbRef = firebase.database().ref('users/' + this.user.uid);
     dbRef.set(data);
   },
-  // getDataFromDatabase: function() {
-  //   let dbRef = firebase.database().ref('users/' + this.user.uid);
-  //   dbRef.once('value').then(snapshot => {
-  //     this.userData = snapshot.val() || {};
-  //   }).catch(handleError);
-  // },
+  getDataFromDatabase: function() {
+    let dbRef = firebase.database().ref('users/' + this.user.uid);
+    return dbRef.once('value');
+  },
 
   setAuthStateListener: function() {
     firebase.auth().onAuthStateChanged(function(user) {
@@ -104,6 +100,51 @@ let App = {
     this.$loginButton.toggle(true);
   },
 
+  loadPageData: function() {
+    if (location.pathname === "/profile/user-profile") {
+      this.loadProfileHeader();
+      this.loadProfileAbout();
+      this.loadProfileEdit();
+    }
+  },
+  loadProfileHeader: function() {
+    this.$usernameWelcome.text(this.user.displayName);
+    let photoURL = this.user.photoURL || DEFAULT_PROFILE_PHOTO_URL;
+    this.$userAvatar.attr('src', photoURL);
+    this.$usernameHeader.text(this.user.displayName);
+  },
+  loadProfileAbout: function() {
+    let data = this.userData;
+    this.$aboutPhone.text(data.phone);
+    let day = data['birthdate-day'],
+        month = data['birthdate-month'],
+        year = data['birthdate-year'];
+    let birthdate = `${day}.${month}.${year}`;
+    this.$aboutBirthdate.text(birthdate);
+    this.$aboutContactEmail.text(data['contact-email']);
+    this.$aboutLocation.text(data.location);
+    this.$aboutPosition.text(data.position || '');
+    this.$aboutBio.text(data.bio);
+  },
+  loadProfileEdit: function() {
+    let data = this.userData;
+    let names = this.user.displayName.split(' ');
+    let firstName = names[0];
+    let lastName = names[1];
+    this.$editFirstName.val(firstName);
+    this.$editLastName.val(lastName);
+    this.$editBirthdateDay.val(data['birthdate-day']);
+    this.$editBirthdateMonth.val(data['birthdate-month']);
+    this.$editBirthdateYear.val(data['birthdate-year']);
+    this.$editLocation.val(data.location);
+    this.$editContactEmail.val(data['contact-email']);
+    this.$editPhone.val(data.phone);
+    this.$editFacebookUrl.val(data['facebook-url']);
+    this.$editInstagramUrl.val(data['instagram-url']);
+    this.$editTwitterUrl.val(data['twitter-url']);
+    this.$editBio.val(data.bio);
+  },
+
   bindElements: function() {
     // nav
     this.$loginButton = $('#login-button');
@@ -129,6 +170,7 @@ let App = {
     // profile general
     this.$usernameWelcome = $('#username-welcome');
     this.$backgroundHeaderImage = $('#background-header-image');
+    this.$editBackgroundImageButton =$('#edit-background-image');
     this.$userAvatar = $('#user-avatar');
     this.$usernameHeader = $('#username-header');
 
@@ -211,6 +253,10 @@ let App = {
     this.bindElements();
     this.bindEventListeners();
     this.setAuthStateListener();
+    this.getDataFromDatabase.then(snapshot => {
+      this.userData = snapshot.val() || {};
+      this.loadPageData();
+    }).catch(handleError);
     return this;
   },
 };
