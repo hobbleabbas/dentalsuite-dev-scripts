@@ -214,6 +214,7 @@ let App = {
   bindEventListeners: function() {
     this.$signupForm.submit(this.handleSignup.bind(this));
     this.$signinForm.submit(this.handleSignin.bind(this));
+    this.$signinGoogleButton.click(this.handleGoogleSignin.bind(this));
     this.$editProfileForm.submit(this.handleProfileEdit.bind(this));
     this.$signoutButton.click(this.handleSignout.bind(this));
   },
@@ -237,6 +238,10 @@ let App = {
       password: $('#signinPassword').val(),
     };
     this.signin(data);
+  },
+  handleGoogleSignin: function(event) {
+    event.preventDefault();
+    this.signinGoogle();
   },
   handleProfileEdit: function(event) {
     event.preventDefault();
