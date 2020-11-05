@@ -16,7 +16,7 @@ let App = {
   signup: function(data) {
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
       .then(redirectToProfile)
-      .catch(this.logSignupError.bind(this));
+      .catch(this.displaySignupError.bind(this));
   },
   signin: function(data) {
     firebase.auth().signInWithEmailAndPassword(data.email, data.password)
@@ -35,7 +35,7 @@ let App = {
     firebase.auth().signOut();
     redirectToHome();
   },
-  logSignupError: function(error) {
+  displaySignupError: function(error) {
     this.$signupError.text(error.message);
   },
 
@@ -165,16 +165,16 @@ let App = {
 
     // sign up
     this.$signupForm = $('#signupForm');
-    this.$signupEmail = $('#signupEmail');
-    this.$signupPassword = $('#signupPassword');
+    // this.$signupEmail = $('#signupEmail');
+    // this.$signupPassword = $('#signupPassword');
     this.$signupAgreeToTermsCheckbox = $('#sigupCheckbox');
     this.$signupError = $('#signupError');
 
     // sign in
     this.$signinForm = $('#signinForm');
     this.$signinGoogleButton = $('#signin-google-button');
-    this.$signinEmail = $('#signinEmail');
-    this.$signinPassword = $('#signinPassword');
+    // this.$signinEmail = $('#signinEmail');
+    // this.$signinPassword = $('#signinPassword');
     this.$signinRememberMeCheckbox = $('#signinCheckbox');
     this.$forgotPasswordLink = $('#forgotPasswordLink');
 
@@ -227,8 +227,8 @@ let App = {
     event.preventDefault();
     event.stopPropagation();
     let data = {
-      email: $('#signupEmail').val(),
-      password: $('#signupPassword').val(),
+      email: $('#email').val(),
+      password: $('#password').val(),
     };
     console.log('from handleSignup()');
     console.log(data);
@@ -238,8 +238,8 @@ let App = {
     event.preventDefault();
     event.stopPropagation();
     let data = {
-      email: $('#signinEmail').val(),
-      password: $('#signinPassword').val(),
+      email: $('#email').val(),
+      password: $('#password').val(),
     };
     console.log('from handleSignin()');
     console.log(data);
