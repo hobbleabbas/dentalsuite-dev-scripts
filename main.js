@@ -14,7 +14,7 @@ let App = {
   signup: function(data) {
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
       .then(redirectToProfile)
-      .catch(logError);
+      .catch(this.logSignupError.bind(this));
   },
   signin: function(data) {
     firebase.auth().signInWithEmailAndPassword(data.email, data.password)
@@ -25,6 +25,9 @@ let App = {
   signout: function() {
     firebase.auth().signOut();
     redirectToHome();
+  },
+  logSignupError: function(error) {
+    this.$signupError.text(error.message);
   },
 
   putFileInStorage: function(uid, file) {},
@@ -85,6 +88,7 @@ let App = {
     this.$signupEmail = $('#signupEmail');
     this.$signupPassword = $('#signupPassword');
     this.$signupAgreeToTermsCheckbox = $('#sigupCheckbox');
+    this.$signupError = $('#signupError');
 
     // sign in
     this.$signinForm = $('#signinForm');
@@ -119,9 +123,9 @@ let App = {
     this.$editLocation = $('#edit-location');
     this.$editContactEmail = $('#edit-contact-email');
     this.$editPhone = $('#edit-phone');
-    this.$editFacebookLink = $('#edit-facebook-link');
-    this.$editInstagramLink = $('#edit-instagram-link');
-    this.$editTwitterLink = $('#edit-twitter-link');
+    this.$editFacebookUrl = $('#edit-facebook-url');
+    this.$editInstagramUrl = $('#edit-instagram-url');
+    this.$editTwitterUrl = $('#edit-twitter-url');
     this.$editBio = $('#edit-bio');
   },
   bindEventListeners: function() {
