@@ -9,8 +9,8 @@ let App = {
       return displayName.split(' ')[0];
     }
   },
-  userEmail: function() {
-    return this.user.email;
+  userEmailPrefix: function() {
+    return this.user.email.split('@')[0];
   },
 
   signup: function(data) {
@@ -86,14 +86,14 @@ let App = {
     this.$loginButton.toggle(false);
     let attribute = {style: `background-image: url(${this.user.photoURL})`};
     this.$profileAvatarButton.attr(attribute);
-    this.$profileNameButton.text(this.userFirstName() || this.userEmail());
+    this.$profileNameButton.text(this.userFirstName() || this.userEmailPrefix());
     this.$profileAvatarNameSection.toggle(true);
   },
   toggleNavUserLoggedInWithoutPhoto: function() {
     this.$loginButton.toggle(false);
     let attribute = {style: `background-image: url(${DEFAULT_PROFILE_PHOTO_URL})`};
     this.$profileAvatarButton.attr(attribute);
-    this.$profileNameButton.text(this.userFirstName() || this.userEmail());
+    this.$profileNameButton.text(this.userFirstName() || this.userEmailPrefix());
     this.$profileAvatarNameSection.toggle(true);
   },
   toggleNavUserLoggedOut: function() {
@@ -141,7 +141,7 @@ let App = {
     this.$aboutBio = $('#about-bio');
 
     // profile edit
-    this.$editProfileForm = $('wf-form-profile');
+    this.$editProfileForm = $('#wf-form-profile');
     this.$editPhotoUpload = $('#edit-profile-photo');
     this.$editFirstName = $('#edit-first-name');
     this.$editLastName = $('#edit-last-name');
