@@ -225,6 +225,7 @@ let App = {
   },
   handleSignup: function(event) {
     event.preventDefault();
+    event.stopPropagation();
     let data = {
       email: $('#signupEmail').val(),
       password: $('#signupPassword').val(),
@@ -233,6 +234,7 @@ let App = {
   },
   handleSignin: function(event) {
     event.preventDefault();
+    event.stopPropagation();
     let data = {
       email: $('#signinEmail').val(),
       password: $('#signinPassword').val(),
