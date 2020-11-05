@@ -1,3 +1,5 @@
+DEFAULT_PROFILE_PHOTO_URL = 'https://i.imgur.com/mCHMpLT.png';
+
 let App = {
   user: null,
 
@@ -82,19 +84,22 @@ let App = {
   },
   toggleNavUserLoggedInWithPhoto: function() {
     this.$loginButton.toggle(false);
-    // set pic in profile avatar button
+    let attribute = {style: `background-image: url(${this.user.photoURL})`};
+    this.$profileAvatarButton.attr(attribute);
     this.$profileNameButton.text(this.userFirstName() || this.userEmail());
     this.$profileAvatarNameSection.toggle(true);
   },
   toggleNavUserLoggedInWithoutPhoto: function() {
     this.$loginButton.toggle(false);
-    // load a default placeholder photo as avatar
+    let attribute = {style: `background-image: url(${DEFAULT_PROFILE_PHOTO_URL})`};
+    this.$profileAvatarButton.attr(attribute);
     this.$profileNameButton.text(this.userFirstName() || this.userEmail());
     this.$profileAvatarNameSection.toggle(true);
   },
   toggleNavUserLoggedOut: function() {
-    // remove photourl and user first name from elements
-    this.$profileNameButton.text('');
+    let attribute = {style: `background-image: url(${DEFAULT_PROFILE_PHOTO_URL})`};
+    this.$profileAvatarButton.attr(attribute);
+    this.$profileNameButton.text('User Name');
     this.$profileAvatarNameSection.toggle(false);
     this.$loginButton.toggle(true);
   },
