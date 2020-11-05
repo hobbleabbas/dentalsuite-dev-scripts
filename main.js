@@ -142,7 +142,7 @@ let App = {
 
     // profile edit
     this.$editProfileForm = $('#wf-form-profile');
-    this.$editPhotoUpload = $('#edit-profile-photo');
+    this.$editPhotoUpload = $('#photo-upload');
     this.$editFirstName = $('#edit-first-name');
     this.$editLastName = $('#edit-last-name');
     this.$editBirthdateDay = $('#edit-birthdate-day');
