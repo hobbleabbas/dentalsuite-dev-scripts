@@ -164,17 +164,13 @@ let App = {
     this.$profileAvatarNameSection = $('#profile-avatar-and-name');
 
     // sign up
-    this.$signupForm = $('#signupForm');
-    // this.$signupEmail = $('#signupEmail');
-    // this.$signupPassword = $('#signupPassword');
+    this.signupForm = document.getElementById('signupForm');
     this.$signupAgreeToTermsCheckbox = $('#sigupCheckbox');
     this.$signupError = $('#signupError');
 
     // sign in
-    this.$signinForm = $('#signinForm');
+    this.signinForm = document.getElementById('signinForm');
     this.$signinGoogleButton = $('#signin-google-button');
-    // this.$signinEmail = $('#signinEmail');
-    // this.$signinPassword = $('#signinPassword');
     this.$signinRememberMeCheckbox = $('#signinCheckbox');
     this.$forgotPasswordLink = $('#forgotPasswordLink');
 
@@ -212,8 +208,11 @@ let App = {
     this.$signoutButton = $('.link-logout');
   },
   bindEventListeners: function() {
-    this.$signupForm.get(0).addEventListener('submit', this.handleSignup.bind(this), true);
-    this.$signinForm.get(0).addEventListener('submit', this.handleSignin.bind(this), true);
+    if (signupForm) {
+      this.signupForm.addEventListener('submit', this.handleSignup.bind(this), true);
+    } else if (signinForm) {
+      this.signinForm.addEventListener('submit', this.handleSignin.bind(this), true);
+    }
     this.$signinGoogleButton.click(this.handleGoogleSignin.bind(this));
     this.$editProfileForm.submit(this.handleProfileEdit.bind(this));
     this.$signoutButton.click(this.handleSignout.bind(this));
