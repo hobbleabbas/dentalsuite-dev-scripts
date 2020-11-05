@@ -230,6 +230,8 @@ let App = {
       email: $('#signupEmail').val(),
       password: $('#signupPassword').val(),
     };
+    console.log('from handleSignup()');
+    console.log(data);
     this.signup(data);
   },
   handleSignin: function(event) {
@@ -239,6 +241,8 @@ let App = {
       email: $('#signinEmail').val(),
       password: $('#signinPassword').val(),
     };
+    console.log('from handleSignin()');
+    console.log(data);
     this.signin(data);
   },
   handleGoogleSignin: function(event) {
