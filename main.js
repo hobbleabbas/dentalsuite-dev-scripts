@@ -38,9 +38,6 @@ let App = {
   },
   displayFormError: function(error) {
     this.$formError.text(error.message).toggle(true);
-    setTimeout(function() {
-      this.$formError.toggle(false);
-    }.bind(this), FLASH_MESSAGE_DELAY);
   },
 
   updateProfile: function(data) {
