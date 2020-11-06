@@ -52,7 +52,6 @@ let App = {
     avatarRef.put(file).then(function(snapshot) {
       avatarRef.getDownloadURL().then(function(url) {
         this.updateProfile({photoURL: url});
-        location.reload();
       }.bind(this)).catch(logError);
     }.bind(this)).catch(logError);
   },
@@ -64,7 +63,6 @@ let App = {
       } else {
         setTimeout(function() {
           this.$editProfileForm.toggle(true);
-          // $('.success-message').toggle(false);
           location.reload();
         }.bind(this), FLASH_MESSAGE_DELAY);
       }
