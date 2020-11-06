@@ -64,7 +64,8 @@ let App = {
       } else {
         setTimeout(function() {
           this.$editProfileForm.toggle(true);
-          $('.success-message').toggle(false);
+          // $('.success-message').toggle(false);
+          location.reload();
         }.bind(this), FLASH_MESSAGE_DELAY);
       }
     }.bind(this));
