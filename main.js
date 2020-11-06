@@ -1,4 +1,5 @@
 DEFAULT_PROFILE_PHOTO_URL = 'https://firebasestorage.googleapis.com/v0/b/dentalsuite-7521f.appspot.com/o/default-photo.png?alt=media&token=375826ab-c96f-4046-80a5-b0bb9b941823';
+FLASH_MESSAGE_DELAY = 3000;
 
 let App = {
   user: null,
@@ -36,7 +37,10 @@ let App = {
     redirectToHome();
   },
   displayFormError: function(error) {
-    this.$formError.toggle(true).text(error.message);
+    this.$formError.text(error.message).toggle(true);
+    setTimeout(function() {
+      this.$formError.toggle(false);
+    }.bind(this), FLASH_MESSAGE_DELAY);
   },
 
   updateProfile: function(data) {
@@ -64,7 +68,7 @@ let App = {
         setTimeout(function() {
           this.$editProfileForm.toggle(true);
           $('.success-message').toggle(false);
-        }.bind(this), 1000);
+        }.bind(this), FLASH_MESSAGE_DELAY);
       }
     }.bind(this));
   },
