@@ -16,12 +16,12 @@ let App = {
   signup: function(data) {
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
       .then(redirectToProfile)
-      .catch(this.displaySignupError.bind(this));
+      .catch(this.displayFormError.bind(this));
   },
   signin: function(data) {
     firebase.auth().signInWithEmailAndPassword(data.email, data.password)
       .then(redirectToProfile)
-      .catch(logError);
+      .catch(this.displayFormError.bind(this));
   },
   signinGoogle: function() {
     var provider = new firebase.auth.GoogleAuthProvider();
@@ -29,14 +29,14 @@ let App = {
       .then(function(result) {
         this.user = result.user;
         redirectToProfile();
-      }.bind(this)).catch(logError);
+      }.bind(this)).catch(this.displayFormError.bind(this));
   },
   signout: function() {
     firebase.auth().signOut();
     redirectToHome();
   },
-  displaySignupError: function(error) {
-    this.$signupError.text(error.message);
+  displayFormError: function(error) {
+    this.$formError.toggle(true).text(error.message);
   },
 
   updateProfile: function(data) {
@@ -57,7 +57,16 @@ let App = {
   },
   putDataInDatabase: function(data) {
     let dbRef = firebase.database().ref('users/' + this.user.uid);
-    dbRef.set(data);
+    dbRef.set(data, function(error) {
+      if (error) {
+        logError(error);
+      } else {
+        setTimeout(function() {
+          this.$editProfileForm.toggle(true);
+          $('.success-message').toggle(false);
+        }.bind(this), 1000);
+      }
+    }.bind(this));
   },
   getDataFromDatabase: function() {
     let dbRef = firebase.database().ref('users/' + this.user.uid);
@@ -119,7 +128,9 @@ let App = {
     }
   },
   loadProfileHeader: function() {
-    this.$usernameWelcome.text(this.user.displayName);
+    let displayName = this.user.displayName;
+    let headerText = displayName ? `Hello there, ${displayName}` : 'Hello there!';
+    this.$welcomeHeading.text(headerText);
     let photoURL = this.user.photoURL || DEFAULT_PROFILE_PHOTO_URL;
     this.$userAvatar.attr('src', photoURL);
     this.$usernameHeader.text(this.user.displayName);
@@ -162,10 +173,12 @@ let App = {
     this.$profileNameButton = $('#profile-name-button');
     this.$profileAvatarNameSection = $('#profile-avatar-and-name');
 
+    // signup/signin general
+    this.$formError = $('#form-error-message').toggle(false);
+
     // sign up
     this.signupForm = document.getElementById('signupForm');
     this.$signupAgreeToTermsCheckbox = $('#sigupCheckbox');
-    this.$signupError = $('#signupError');
 
     // sign in
     this.signinForm = document.getElementById('signinForm');
@@ -174,7 +187,7 @@ let App = {
     this.$forgotPasswordLink = $('#forgotPasswordLink');
 
     // profile general
-    this.$usernameWelcome = $('#username-welcome');
+    this.$welcomeHeading = $('#welcome-heading');
     this.$backgroundHeaderImage = $('#background-header-image');
     this.$editBackgroundImageButton =$('#edit-background-image');
     this.$userAvatar = $('#user-avatar');
@@ -299,6 +312,10 @@ function redirectToHome() {
 
 function redirectToProfile() {
   redirect('profile/user-profile');
+}
+
+function log(message) {
+  console.log(message);
 }
 
 function logError(error) {
