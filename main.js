@@ -62,6 +62,9 @@ let App = {
       this.userData[key] = value;
     });
   },
+  updateuser: function() {
+    this.user = firebase.auth().currentUser;
+  },
 
   putFileInStorage: function(file) {
     let storageRef = firebase.storage().ref();
@@ -69,7 +72,7 @@ let App = {
     let avatarRef = storageRef.child(path);
     avatarRef.put(file).then(function(snapshot) {
       avatarRef.getDownloadURL().then(function(url) {
-        this.updateProfile({photoURL: url});
+        this.updateProfile({photoURL: url}).then(this.updateUser.bind(this));
       }.bind(this)).catch(logError);
     }.bind(this)).catch(logError);
   },
