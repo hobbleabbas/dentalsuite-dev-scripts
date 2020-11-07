@@ -45,6 +45,7 @@ let App = {
 
   updateProfile: function(data) {
     this.user.updateProfile(data)
+      .then(this.updateUser.bind(this))
       .catch(logError);
   },
   resetProfileAfterUpdate: function(data) {
@@ -72,7 +73,7 @@ let App = {
     let avatarRef = storageRef.child(path);
     avatarRef.put(file).then(function(snapshot) {
       avatarRef.getDownloadURL().then(function(url) {
-        this.updateProfile({photoURL: url}).then(this.updateUser.bind(this));
+        this.updateProfile({photoURL: url});
       }.bind(this)).catch(logError);
     }.bind(this)).catch(logError);
   },
