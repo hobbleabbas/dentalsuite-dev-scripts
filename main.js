@@ -160,8 +160,8 @@ let App = {
     Object.keys(this.userData).forEach(function(key) {
       let value = data[key];
       let element = document.getElementById('about-' + key);
-      if (element) {
-        element.textContent = value || '';
+      if (element && value) {
+        element.textContent = value;
       }
     });
   },
@@ -170,8 +170,8 @@ let App = {
     Object.keys(data).forEach(function(key) {
       let value = data[key];
       let element = document.getElementById('edit-' + key);
-      if (element) {
-        element.value = value || '';
+      if (element && value) {
+        element.value = value;
       }
     });
   },
