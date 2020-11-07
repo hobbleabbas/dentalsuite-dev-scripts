@@ -92,8 +92,7 @@ let App = {
           this.userData = snapshot.val() || {};
           this.loadPageData();
           this.$profileNameButton.text(this.userData['first-name'] || user.email);
-          $loadingScreenTop.animate({top: -window.innerHeight}, LOADING_SCREEN_DELAY);
-          $loadingScreenBottom.animate({top: window.innerHeight}, LOADING_SCREEN_DELAY);
+          this.hideLoadingScreen();
         }).catch(logError);
       } else {
         this.user = null;
@@ -101,6 +100,17 @@ let App = {
         this.toggleNavUserLoggedOut();
       }
     }.bind(this));
+  },
+  hideLoadingScreen: function() {
+    this.$loadingScreenTop.animate({top: -window.innerHeight}, LOADING_SCREEN_DELAY);
+    this.$loadingScreenBottom.animate({top: window.innerHeight}, LOADING_SCREEN_DELAY);
+  },
+  displayLoadingScreen: function() {
+    this.$loadingScreenTop = $(document.createElement('div'))
+        .addClass('loading-screen');
+    this.$loadingScreenBottom = $(document.createElement('div'))
+        .addClass('loading-screen');
+    $(document.body).append(this.$loadingScreenTop, this.$loadingScreenBottom);
   },
   authGuardProfile: function() {
     if (this.isProfilePage() && !this.user) {
@@ -197,11 +207,7 @@ let App = {
     this.$userAvatar = $('#user-avatar');
     this.$usernameHeader = $('#username-header');
     if (this.isProfilePage()) {
-      this.$loadingScreenTop = $(document.createElement('div'))
-          .addClass('loading-screen');
-      this.$loadingScreenBottom = $(document.createElement('div'))
-          .addClass('loading-screen');
-      $(document.body).append(this.$loadingScreenTop, this.$loadingScreenBottom);
+      this.displayLoadingScreen();
     }
 
     // profile about
