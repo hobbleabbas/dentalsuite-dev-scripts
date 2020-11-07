@@ -50,6 +50,21 @@ let App = {
     this.user.updateProfile(data)
       .catch(logError);
   },
+  resetProfileAfterUpdate: function(data) {
+    this.$success.toggle(false);
+    this.$editProfileForm.toggle(true);
+    window.scrollTo(0, 0);
+    this.updateUserDataLocal(data);
+    this.loadPageData();
+    this.setProfileNavAvatar(this.user.photoURL);
+    this.setProfileNavName();
+  },
+  updateUserDataLocal: function(data) {
+    Object.keys(data).forEach(function(key) {
+      let value = data[key];
+      this.userData[key] = value;
+    });
+  },
 
   putFileInStorage: function(file) {
     let storageRef = firebase.storage().ref();
@@ -68,8 +83,7 @@ let App = {
         logError(error);
       } else {
         setTimeout(function() {
-          this.$editProfileForm.toggle(true);
-          location.reload();
+          this.resetProfileAfterUpdate(data);
         }.bind(this), FLASH_MESSAGE_DELAY);
       }
     }.bind(this));
@@ -91,7 +105,7 @@ let App = {
         this.getDataFromDatabase().then(snapshot => {
           this.userData = snapshot.val() || {};
           this.loadPageData();
-          this.$profileNameButton.text(this.userData['first-name'] || user.email);
+          this.setProfileNavName();
           this.hideLoadingScreen();
         }).catch(logError);
       } else {
@@ -112,22 +126,27 @@ let App = {
   },
   toggleNavUserLoggedInWithPhoto: function() {
     this.$loginButton.toggle(false);
-    let attribute = {style: `background-image: url(${this.user.photoURL})`};
-    this.$profileAvatarButton.attr(attribute);
+    this.setProfileNavAvatar(this.user.photoURL);
     this.$profileAvatarNameSection.toggle(true);
   },
   toggleNavUserLoggedInWithoutPhoto: function() {
     this.$loginButton.toggle(false);
-    let attribute = {style: `background-image: url(${DEFAULT_PROFILE_PHOTO_URL})`};
-    this.$profileAvatarButton.attr(attribute);
+    this.setProfileNavAvatar(DEFAULT_PROFILE_PHOTO_URL);
     this.$profileAvatarNameSection.toggle(true);
   },
   toggleNavUserLoggedOut: function() {
-    let attribute = {style: `background-image: url(${DEFAULT_PROFILE_PHOTO_URL})`};
-    this.$profileAvatarButton.attr(attribute);
+    this.setProfileNavAvatar(DEFAULT_PROFILE_PHOTO_URL);
     this.$profileNameButton.text('User Name');
     this.$profileAvatarNameSection.toggle(false);
     this.$loginButton.toggle(true);
+  },
+  setProfileNavAvatar: function(url) {
+    url = url || DEFAULT_PROFILE_PHOTO_URL;
+    let attribute = {style: `background-image: url(${url})`};
+    this.$profileAvatarButton.attr(attribute);
+  },
+  setProfileNavName: function() {
+    this.$profileNameButton.text(this.userData['first-name'] || user.email);
   },
 
   loadPageData: function() {
