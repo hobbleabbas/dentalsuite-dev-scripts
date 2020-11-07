@@ -1,5 +1,5 @@
-DEFAULT_PROFILE_PHOTO_URL = 'https://firebasestorage.googleapis.com/v0/b/dentalsuite-7521f.appspot.com/o/default-photo.png?alt=media&token=375826ab-c96f-4046-80a5-b0bb9b941823';
 FLASH_MESSAGE_DELAY = 3000;
+LOADING_SCREEN_DELAY = 1000;
 
 let App = {
   user: null,
@@ -92,6 +92,8 @@ let App = {
           this.userData = snapshot.val() || {};
           this.loadPageData();
           this.$profileNameButton.text(this.userData['first-name'] || user.email);
+          $loadingScreenTop.animate({top: -window.innerHeight}, LOADING_SCREEN_DELAY);
+          $loadingScreenBottom.animate({top: window.innerHeight}, LOADING_SCREEN_DELAY);
         }).catch(logError);
       } else {
         this.user = null;
@@ -101,7 +103,7 @@ let App = {
     }.bind(this));
   },
   authGuardProfile: function() {
-    if (location.pathname.includes('profile') && !this.user) {
+    if (this.isProfilePage() && !this.user) {
       redirect('/');
     }
   },
@@ -194,6 +196,12 @@ let App = {
     this.$editBackgroundImageButton =$('#edit-background-image');
     this.$userAvatar = $('#user-avatar');
     this.$usernameHeader = $('#username-header');
+    if (this.isProfilePage()) {
+      this.$loadingScreenTop = $(document.createElement('div'))
+          .addClass('loading-screen');
+      this.$loadingScreenBottom = $(document.createElement('div'))
+          .addClass('loading-screen');
+    }
 
     // profile about
     this.$aboutPhone = $('#about-phone');
@@ -222,14 +230,23 @@ let App = {
     this.$signoutButton = $('.link-logout');
   },
   bindEventListeners: function() {
-    if (this.signupForm) {
+    if (this.isSignupPage()) {
       this.signupForm.addEventListener('submit', this.handleSignup.bind(this), true);
-    } else if (this.signinForm) {
+    } else if (this.isSigninPage()) {
       this.signinForm.addEventListener('submit', this.handleSignin.bind(this), true);
     }
     this.$signinGoogleButton.click(this.handleGoogleSignin.bind(this));
     this.$editProfileForm.submit(this.handleProfileEdit.bind(this));
     this.$signoutButton.click(this.handleSignout.bind(this));
+  },
+  isProfilePage: function() {
+    return location.pathname.includes('profile');
+  },
+  isSigninPage: function() {
+    return !!this.signinForm;
+  },
+  isSignupPage: function() {
+    return !!this.signupForm;
   },
 
   handleSignout: function(event) {
