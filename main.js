@@ -201,6 +201,7 @@ let App = {
           .addClass('loading-screen');
       this.$loadingScreenBottom = $(document.createElement('div'))
           .addClass('loading-screen');
+      $(document.body).append(this.$loadingScreenTop, this.$loadingScreenBottom);
     }
 
     // profile about
