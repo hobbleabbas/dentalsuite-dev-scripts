@@ -134,7 +134,9 @@ let App = {
   },
   loadProfileHeader: function() {
     let data = this.userData;
-    let displayName = data['first-name'] + ' ' + data['last-name'];
+    let firstName = data['first-name'] || '';
+    let lastName = data['last-name'] || '';
+    let displayName = (firstName + ' ' + lastName).trim();
     let headerText = displayName ? `Hello there, ${displayName}` : 'Hello there!';
     this.$welcomeHeading.text(headerText);
     let photoURL = this.user.photoURL || DEFAULT_PROFILE_PHOTO_URL;
