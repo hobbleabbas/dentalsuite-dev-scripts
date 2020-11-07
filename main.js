@@ -144,26 +144,17 @@ let App = {
     }
   },
   loadProfileHeader: function() {
-    let displayName = this.user.displayName;
+    let data = this.userData;
+    let displayName = data['first-name'] + ' ' + data['last-name'];
     let headerText = displayName ? `Hello there, ${displayName}` : 'Hello there!';
     this.$welcomeHeading.text(headerText);
     let photoURL = this.user.photoURL || DEFAULT_PROFILE_PHOTO_URL;
     this.$userAvatar.attr('src', photoURL);
-    this.$usernameHeader.text(this.user.displayName);
+    this.$usernameHeader.text(displayName);
   },
   loadProfileAbout: function() {
     let data = this.userData;
-    // this.$aboutPhone.text(data.phone);
-    // let day = data['birthdate-day'],
-    //     month = data['birthdate-month'],
-    //     year = data['birthdate-year'];
-    // let birthdate = `${day}.${month}.${year}`;
-    // this.$aboutBirthdate.text(birthdate);
-    // this.$aboutContactEmail.text(data['contact-email']);
-    // this.$aboutLocation.text(data.location);
-    // this.$aboutPosition.text(data.position || '');
-    // this.$aboutBio.text(data.bio);
-    Object.keys(data).forEach(function(key) {
+    Object.keys(this.userData).forEach(function(key) {
       let value = data[key];
       let element = document.getElementById('about-' + key);
       if (element) {
@@ -173,20 +164,6 @@ let App = {
   },
   loadProfileEdit: function() {
     let data = this.userData;
-    // let displayName = this.user.displayName;
-    // let names = displayName ? displayName.split(' ') : ['', ''];
-    // this.$editFirstName.val(names[0]);
-    // this.$editLastName.val(names[1]);
-    // this.$editBirthdateDay.val(data['birthdate-day']);
-    // this.$editBirthdateMonth.val(data['birthdate-month']);
-    // this.$editBirthdateYear.val(data['birthdate-year']);
-    // this.$editLocation.val(data.location);
-    // this.$editContactEmail.val(data['contact-email']);
-    // this.$editPhone.val(data.phone);
-    // this.$editFacebookUrl.val(data['facebook-url']);
-    // this.$editInstagramUrl.val(data['instagram-url']);
-    // this.$editTwitterUrl.val(data['twitter-url']);
-    // this.$editBio.val(data.bio);
     Object.keys(data).forEach(function(key) {
       let value = data[key];
       let element = document.getElementById('edit-' + key);
@@ -299,7 +276,6 @@ let App = {
     let form = event.currentTarget;
     let data = getFormData(form);
     this.extractAndProcessPhotoFromFormData(data);
-    // this.extractAndProcessUsernameFromFormData(data);
     this.putDataInDatabase(data);
   },
   extractAndProcessPhotoFromFormData: function(data) {
@@ -309,16 +285,6 @@ let App = {
       delete data['photo-upload'];
     }
   },
-  // extractAndProcessUsernameFromFormData: function(data) {
-  //   if (data['first-name'] || data['last-name']) {
-  //     let first = data['first-name'].trim(),
-  //         last = data['last-name'].trim();
-  //     let username = first + ' ' + last;
-  //     this.updateProfile({displayName: username});
-  //     delete data['first-name'];
-  //     delete data['last-name'];
-  //   }
-  // },
 
   init: function() {
     this.bindElements();
