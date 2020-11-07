@@ -199,6 +199,8 @@ let App = {
     this.$editBackgroundImageButton =$('#edit-background-image');
     this.$userAvatar = $('#user-avatar');
     this.$usernameHeader = $('#username-header');
+    this.$loadingScreenTop = $('#loading-screen-top');
+    this.$loadingScreenBottom = $('#loading-screen-bottom');
 
     // profile about
     this.$aboutPhone = $('#about-phone');
