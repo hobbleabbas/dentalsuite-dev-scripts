@@ -42,9 +42,6 @@ let App = {
     this.$success.toggle(false);
     this.$error.text(error.message).toggle(true);
   },
-  displaySuccess: function() {
-    this.$success.text('Successfully updated.').toggle(true);
-  },
 
   updateProfile: function(data) {
     this.user.updateProfile(data)
@@ -200,7 +197,7 @@ let App = {
 
     // generic
     this.$error = $('#error-message');
-    this.$sucess = $('#success-message');
+    this.$success = $('#success-message');
 
     // sign up
     this.signupForm = document.getElementById('signupForm');
