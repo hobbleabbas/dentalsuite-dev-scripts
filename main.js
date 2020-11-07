@@ -147,7 +147,7 @@ let App = {
       let value = data[key];
       let element = document.getElementById('about-' + key);
       if (element) {
-        element.textContent = value;
+        element.textContent = value || '';
       }
     });
   },
