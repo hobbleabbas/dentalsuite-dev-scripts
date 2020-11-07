@@ -1,5 +1,5 @@
 FLASH_MESSAGE_DELAY = 3000;
-LOADING_SCREEN_DELAY = 1000;
+LOADING_SCREEN_DELAY = 500;
 
 let App = {
   user: null,
@@ -105,13 +105,6 @@ let App = {
     this.$loadingScreenTop.animate({top: -window.innerHeight}, LOADING_SCREEN_DELAY);
     this.$loadingScreenBottom.animate({top: window.innerHeight}, LOADING_SCREEN_DELAY);
   },
-  displayLoadingScreen: function() {
-    this.$loadingScreenTop = $(document.createElement('div'))
-        .addClass('loading-screen');
-    this.$loadingScreenBottom = $(document.createElement('div'))
-        .addClass('loading-screen');
-    $(document.body).append(this.$loadingScreenTop, this.$loadingScreenBottom);
-  },
   authGuardProfile: function() {
     if (this.isProfilePage() && !this.user) {
       redirect('/');
@@ -206,9 +199,8 @@ let App = {
     this.$editBackgroundImageButton =$('#edit-background-image');
     this.$userAvatar = $('#user-avatar');
     this.$usernameHeader = $('#username-header');
-    if (this.isProfilePage()) {
-      this.displayLoadingScreen();
-    }
+    this.$loadingScreenTop = $('#loading-screen-top');
+    this.$loadingScreenBottom = $('#loading-screen-bottom');
 
     // profile about
     this.$aboutPhone = $('#about-phone');
