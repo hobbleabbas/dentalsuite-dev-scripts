@@ -17,27 +17,43 @@ let App = {
   signup: function(data) {
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
       .then(redirectToProfile)
-      .catch(this.displayFormError.bind(this));
+      .catch(this.displayError.bind(this));
   },
   signin: function(data) {
     firebase.auth().signInWithEmailAndPassword(data.email, data.password)
       .then(redirectToProfile)
-      .catch(this.displayFormError.bind(this));
+      .catch(this.displayError.bind(this));
   },
   signinGoogle: function() {
     var provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithPopup(provider)
       .then(function(result) {
         this.user = result.user;
+        this.addDisplayNameToDatabase(this.user);
         redirectToProfile();
-      }.bind(this)).catch(this.displayFormError.bind(this));
+      }.bind(this)).catch(this.displayError.bind(this));
+  },
+  addDisplayNameToDatabase: function(user) {
+    if (user.displayName) {
+      let names = user.displayName.split(' ');
+      let firstName = names[0];
+      let lastName = names.slice(1).join(' ');
+      user.updateProfile({
+        'first-name': firstName,
+        'last-name': lastName
+      });
+    }
   },
   signout: function() {
     firebase.auth().signOut();
     redirectToHome();
   },
-  displayFormError: function(error) {
-    this.$formError.text(error.message).toggle(true);
+  displayError: function(error) {
+    this.$success.toggle(false);
+    this.$error.text(error.message).toggle(true);
+  },
+  displaySuccess: function() {
+    this.$success.text('Successfully updated.').toggle(true);
   },
 
   updateProfile: function(data) {
@@ -137,33 +153,47 @@ let App = {
   },
   loadProfileAbout: function() {
     let data = this.userData;
-    this.$aboutPhone.text(data.phone);
-    let day = data['birthdate-day'],
-        month = data['birthdate-month'],
-        year = data['birthdate-year'];
-    let birthdate = `${day}.${month}.${year}`;
-    this.$aboutBirthdate.text(birthdate);
-    this.$aboutContactEmail.text(data['contact-email']);
-    this.$aboutLocation.text(data.location);
-    this.$aboutPosition.text(data.position || '');
-    this.$aboutBio.text(data.bio);
+    // this.$aboutPhone.text(data.phone);
+    // let day = data['birthdate-day'],
+    //     month = data['birthdate-month'],
+    //     year = data['birthdate-year'];
+    // let birthdate = `${day}.${month}.${year}`;
+    // this.$aboutBirthdate.text(birthdate);
+    // this.$aboutContactEmail.text(data['contact-email']);
+    // this.$aboutLocation.text(data.location);
+    // this.$aboutPosition.text(data.position || '');
+    // this.$aboutBio.text(data.bio);
+    Object.keys(data).forEach(function(key) {
+      let value = data[key];
+      let element = document.getElementById('about-' + key);
+      if (element) {
+        element.textContent = value;
+      }
+    });
   },
   loadProfileEdit: function() {
     let data = this.userData;
-    let displayName = this.user.displayName;
-    let names = displayName ? displayName.split(' ') : ['', ''];
-    this.$editFirstName.val(names[0]);
-    this.$editLastName.val(names[1]);
-    this.$editBirthdateDay.val(data['birthdate-day']);
-    this.$editBirthdateMonth.val(data['birthdate-month']);
-    this.$editBirthdateYear.val(data['birthdate-year']);
-    this.$editLocation.val(data.location);
-    this.$editContactEmail.val(data['contact-email']);
-    this.$editPhone.val(data.phone);
-    this.$editFacebookUrl.val(data['facebook-url']);
-    this.$editInstagramUrl.val(data['instagram-url']);
-    this.$editTwitterUrl.val(data['twitter-url']);
-    this.$editBio.val(data.bio);
+    // let displayName = this.user.displayName;
+    // let names = displayName ? displayName.split(' ') : ['', ''];
+    // this.$editFirstName.val(names[0]);
+    // this.$editLastName.val(names[1]);
+    // this.$editBirthdateDay.val(data['birthdate-day']);
+    // this.$editBirthdateMonth.val(data['birthdate-month']);
+    // this.$editBirthdateYear.val(data['birthdate-year']);
+    // this.$editLocation.val(data.location);
+    // this.$editContactEmail.val(data['contact-email']);
+    // this.$editPhone.val(data.phone);
+    // this.$editFacebookUrl.val(data['facebook-url']);
+    // this.$editInstagramUrl.val(data['instagram-url']);
+    // this.$editTwitterUrl.val(data['twitter-url']);
+    // this.$editBio.val(data.bio);
+    Object.keys(data).forEach(function(key) {
+      let value = data[key];
+      let element = document.getElementById('edit-' + key);
+      if (element) {
+        element.value = value || '';
+      }
+    });
   },
 
   bindElements: function() {
@@ -175,6 +205,10 @@ let App = {
 
     // signup/signin general
     this.$formError = $('#form-error-message').toggle(false);
+
+    // generic
+    this.$error = $('#error-message');
+    this.$sucess = $('#success-message');
 
     // sign up
     this.signupForm = document.getElementById('signupForm');
