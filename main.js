@@ -299,7 +299,7 @@ let App = {
     let form = event.currentTarget;
     let data = getFormData(form);
     this.extractAndProcessPhotoFromFormData(data);
-    this.extractAndProcessUsernameFromFormData(data);
+    // this.extractAndProcessUsernameFromFormData(data);
     this.putDataInDatabase(data);
   },
   extractAndProcessPhotoFromFormData: function(data) {
@@ -309,16 +309,16 @@ let App = {
       delete data['photo-upload'];
     }
   },
-  extractAndProcessUsernameFromFormData: function(data) {
-    if (data['first-name'] || data['last-name']) {
-      let first = data['first-name'].trim(),
-          last = data['last-name'].trim();
-      let username = first + ' ' + last;
-      this.updateProfile({displayName: username});
-      delete data['first-name'];
-      delete data['last-name'];
-    }
-  },
+  // extractAndProcessUsernameFromFormData: function(data) {
+  //   if (data['first-name'] || data['last-name']) {
+  //     let first = data['first-name'].trim(),
+  //         last = data['last-name'].trim();
+  //     let username = first + ' ' + last;
+  //     this.updateProfile({displayName: username});
+  //     delete data['first-name'];
+  //     delete data['last-name'];
+  //   }
+  // },
 
   init: function() {
     this.bindElements();
