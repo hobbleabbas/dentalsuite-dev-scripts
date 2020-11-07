@@ -4,16 +4,6 @@ FLASH_MESSAGE_DELAY = 3000;
 let App = {
   user: null,
 
-  userFirstName: function() {
-    let displayName = this.user.displayName
-    if (displayName) {
-      return displayName.split(' ')[0];
-    }
-  },
-  userEmailPrefix: function() {
-    return this.user.email.split('@')[0];
-  },
-
   signup: function(data) {
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
       .then(redirectToProfile)
@@ -101,6 +91,7 @@ let App = {
         this.getDataFromDatabase().then(snapshot => {
           this.userData = snapshot.val() || {};
           this.loadPageData();
+          this.$profileNameButton.text(this.userData['first-name'] || user.email);
         }).catch(logError);
       } else {
         this.user = null;
@@ -118,14 +109,12 @@ let App = {
     this.$loginButton.toggle(false);
     let attribute = {style: `background-image: url(${this.user.photoURL})`};
     this.$profileAvatarButton.attr(attribute);
-    this.$profileNameButton.text(this.userFirstName() || this.userEmailPrefix());
     this.$profileAvatarNameSection.toggle(true);
   },
   toggleNavUserLoggedInWithoutPhoto: function() {
     this.$loginButton.toggle(false);
     let attribute = {style: `background-image: url(${DEFAULT_PROFILE_PHOTO_URL})`};
     this.$profileAvatarButton.attr(attribute);
-    this.$profileNameButton.text(this.userFirstName() || this.userEmailPrefix());
     this.$profileAvatarNameSection.toggle(true);
   },
   toggleNavUserLoggedOut: function() {
