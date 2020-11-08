@@ -141,12 +141,14 @@ let App = {
     this.$loginButton.toggle(true);
   },
   setProfileNavAvatar: function() {
-    let url = this.userData.photoURL || DEFAULT_PROFILE_PHOTO_URL;
+    let data = this.userData;
+    let url = (data && data.photoURL) || DEFAULT_PROFILE_PHOTO_URL;
     let attribute = {style: `background-image: url(${url})`};
     this.$profileAvatarButton.attr(attribute);
   },
   setProfileHeaderAvatar: function() {
-    let url = this.userData.photoURL || DEFAULT_PROFILE_PHOTO_URL;
+    let data = this.userData;
+    let url = (data && data.photoURL) || DEFAULT_PROFILE_PHOTO_URL;
     this.$userAvatar.attr('src', url);
   },
   setProfileNavName: function() {
