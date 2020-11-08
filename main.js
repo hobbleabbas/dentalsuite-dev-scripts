@@ -100,16 +100,12 @@ let App = {
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         this.user = user;
-        if (user.photoURL) {
-          this.toggleNavUserLoggedInWithPhoto();
-        } else {
-          this.toggleNavUserLoggedInWithoutPhoto();
-        }
+        this.toggleNavWhenUserLoggedIn();
         this.getDataFromDatabase();
       } else {
         this.user = null;
         this.authGuardProfile();
-        this.toggleNavUserLoggedOut();
+        this.toggleNavWhenUserLoggedOut();
       }
     }.bind(this));
   },
@@ -124,19 +120,14 @@ let App = {
       redirect('/');
     }
   },
-  toggleNavUserLoggedInWithPhoto: function() {
+  toggleNavWhenUserLoggedIn: function() {
     this.$loginButton.toggle(false);
     this.setProfileNavAvatar();
     this.$profileAvatarNameSection.toggle(true);
   },
-  toggleNavUserLoggedInWithoutPhoto: function() {
-    this.$loginButton.toggle(false);
-    this.setProfileNavAvatar();
-    this.$profileAvatarNameSection.toggle(true);
-  },
-  toggleNavUserLoggedOut: function() {
-    this.setProfileNavAvatar();
+  toggleNavWhenUserLoggedOut: function() {
     this.$profileNameButton.text('User Name');
+    this.setProfileNavAvatar();
     this.$profileAvatarNameSection.toggle(false);
     this.$loginButton.toggle(true);
   },
