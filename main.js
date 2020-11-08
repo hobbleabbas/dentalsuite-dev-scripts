@@ -77,8 +77,10 @@ let App = {
     }.bind(this)).catch(logError);
   },
   putDataInDatabase: function(data) {
-    let dbRef = firebase.database().ref('users/' + this.user.uid);
-    dbRef.set(data, function(error) {
+    let dbRef = firebase.database().ref();
+    let updates = {};
+    updates['users/' + this.user.uid] = data;
+    dbRef.update(updates, function(error) {
       if (error) {
         logError(error);
       } else {
