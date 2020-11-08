@@ -1,5 +1,5 @@
 FLASH_MESSAGE_DELAY = 3000;
-LOADING_SCREEN_DELAY = 1000;
+LOADING_SCREEN_DELAY = 500;
 
 let App = {
   user: null,
@@ -112,10 +112,20 @@ let App = {
     }.bind(this));
   },
   hideLoadingScreen: function() {
-    this.$loadingScreenTop.animate({top: -window.innerHeight}, LOADING_SCREEN_DELAY)
-        .toggle(false);
-    this.$loadingScreenBottom.animate({top: window.innerHeight}, LOADING_SCREEN_DELAY)
-        .toggle(false);
+    this.$loadingScreenTop.animate(
+      {top: -window.innerHeight},
+      LOADING_SCREEN_DELAY,
+      function() {
+        this.$loadingScreenTop.toggle(false);
+      }
+    );
+    this.$loadingScreenBottom.animate(
+      {top: window.innerHeight},
+      LOADING_SCREEN_DELAY,
+      function() {
+        this.$loadingScreenBottom.toggle(false);
+      }
+    );
   },
   authGuardProfile: function() {
     if (this.isProfilePage() && !this.user) {
