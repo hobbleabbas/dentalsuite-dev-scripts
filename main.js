@@ -161,6 +161,8 @@ let App = {
       this.loadProfileAbout();
       this.loadProfileEdit();
       this.hideLoadingScreen();
+    } else if (location.pathname === "/profile/account-settings/account-settings") {
+      this.loadAccountInfo();
     }
   },
   loadProfileHeader: function() {
@@ -197,6 +199,9 @@ let App = {
   loadAvatars: function() {
     this.setProfileNavAvatar();
     this.setProfileHeaderAvatar();
+  },
+  loadAccountInfo: function() {
+    this.$accountEmail.text(this.user.email);
   },
 
   bindElements: function() {
@@ -257,9 +262,10 @@ let App = {
     this.$editTwitterUrl = $('#edit-twitter-url');
     this.$editBio = $('#edit-bio');
 
-    // account general
+    // account
     this.$resetPassword = $('#account-reset-password-link');
     this.$forgotPassword = $('#forgotPasswordLink');
+    this.$accountEmail = $('#account-email');
   },
   bindEventListeners: function() {
     if (this.isSignupPage()) {
