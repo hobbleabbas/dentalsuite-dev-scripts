@@ -106,7 +106,7 @@ let App = {
   setAuthStateListener: function() {
     firebase.auth().onAuthStateChanged(function(user) {
       this.user = user;
-      authGuard();
+      this.authGuard();
       if (user) {
         this.toggleNavWhenUserLoggedIn();
         this.getDataFromDatabaseAndLoadPageData();
