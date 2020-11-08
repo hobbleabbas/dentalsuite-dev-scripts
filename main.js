@@ -28,7 +28,7 @@ let App = {
       let names = user.displayName.split(' ');
       let firstName = names[0];
       let lastName = names.slice(1).join(' ');
-      user.updateProfile({
+      user.putDataInDatabase({
         'first-name': firstName,
         'last-name': lastName,
         photoURL: user.photoURL
