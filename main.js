@@ -19,18 +19,19 @@ let App = {
     firebase.auth().signInWithPopup(provider)
       .then(function(result) {
         this.user = result.user;
-        this.addDisplayNameToDatabase(this.user);
+        this.addDisplayNameAndPhotoUrlToDatabase(this.user);
         redirectToProfile();
       }.bind(this)).catch(this.displayError.bind(this));
   },
-  addDisplayNameToDatabase: function(user) {
+  addDisplayNameAndPhotoUrlToDatabase: function(user) {
     if (user.displayName) {
       let names = user.displayName.split(' ');
       let firstName = names[0];
       let lastName = names.slice(1).join(' ');
       user.updateProfile({
         'first-name': firstName,
-        'last-name': lastName
+        'last-name': lastName,
+        photoURL: user.photoURL
       });
     }
   },
@@ -54,8 +55,6 @@ let App = {
     window.scrollTo(0, 0);
     this.updateUserDataLocal(data);
     this.loadPageData();
-    this.setProfileNavAvatar(this.user.photoURL);
-    this.setProfileNavName();
   },
   updateUserDataLocal: function(data) {
     Object.keys(data).forEach(function(key) {
@@ -73,7 +72,7 @@ let App = {
     let avatarRef = storageRef.child(path);
     avatarRef.put(file).then(function(snapshot) {
       avatarRef.getDownloadURL().then(function(url) {
-        this.updateProfile({photoURL: url});
+        this.putInDatabase({photoURL: url});
       }.bind(this)).catch(logError);
     }.bind(this)).catch(logError);
   },
@@ -106,8 +105,6 @@ let App = {
         this.getDataFromDatabase().then(snapshot => {
           this.userData = snapshot.val() || {};
           this.loadPageData();
-          this.setProfileNavName();
-          this.hideLoadingScreen();
         }).catch(logError);
       } else {
         this.user = null;
@@ -117,8 +114,10 @@ let App = {
     }.bind(this));
   },
   hideLoadingScreen: function() {
-    this.$loadingScreenTop.animate({top: -window.innerHeight}, LOADING_SCREEN_DELAY);
-    this.$loadingScreenBottom.animate({top: window.innerHeight}, LOADING_SCREEN_DELAY);
+    this.$loadingScreenTop.animate({top: -window.innerHeight}, LOADING_SCREEN_DELAY)
+        .toggle(false);
+    this.$loadingScreenBottom.animate({top: window.innerHeight}, LOADING_SCREEN_DELAY)
+        .toggle(false);
   },
   authGuardProfile: function() {
     if (this.isProfilePage() && !this.user) {
@@ -127,34 +126,41 @@ let App = {
   },
   toggleNavUserLoggedInWithPhoto: function() {
     this.$loginButton.toggle(false);
-    this.setProfileNavAvatar(this.user.photoURL);
+    this.setProfileNavAvatar();
     this.$profileAvatarNameSection.toggle(true);
   },
   toggleNavUserLoggedInWithoutPhoto: function() {
     this.$loginButton.toggle(false);
-    this.setProfileNavAvatar(DEFAULT_PROFILE_PHOTO_URL);
+    this.setProfileNavAvatar();
     this.$profileAvatarNameSection.toggle(true);
   },
   toggleNavUserLoggedOut: function() {
-    this.setProfileNavAvatar(DEFAULT_PROFILE_PHOTO_URL);
+    this.setProfileNavAvatar();
     this.$profileNameButton.text('User Name');
     this.$profileAvatarNameSection.toggle(false);
     this.$loginButton.toggle(true);
   },
-  setProfileNavAvatar: function(url) {
-    url = url || DEFAULT_PROFILE_PHOTO_URL;
+  setProfileNavAvatar: function() {
+    let url = this.userData.photoURL || DEFAULT_PROFILE_PHOTO_URL;
     let attribute = {style: `background-image: url(${url})`};
     this.$profileAvatarButton.attr(attribute);
+  },
+  setProfileHeaderAvatar: function() {
+    let url = this.userData.photoURL || DEFAULT_PROFILE_PHOTO_URL;
+    this.$userAvatar.attr('src', url);
   },
   setProfileNavName: function() {
     this.$profileNameButton.text(this.userData['first-name'] || user.email);
   },
 
   loadPageData: function() {
+    this.loadAvatars();
+    this.setProfileNavName();
     if (location.pathname === "/profile/user-profile") {
       this.loadProfileHeader();
       this.loadProfileAbout();
       this.loadProfileEdit();
+      this.hideLoadingScreen();
     }
   },
   loadProfileHeader: function() {
@@ -164,7 +170,7 @@ let App = {
     let displayName = (firstName + ' ' + lastName).trim();
     let headerText = displayName ? `Hello there, ${displayName}` : 'Hello there!';
     this.$welcomeHeading.text(headerText);
-    let photoURL = this.user.photoURL || DEFAULT_PROFILE_PHOTO_URL;
+    let photoURL = data.photoURL || DEFAULT_PROFILE_PHOTO_URL;
     this.$userAvatar.attr('src', photoURL);
     this.$usernameHeader.text(displayName);
   },
@@ -179,6 +185,7 @@ let App = {
     });
   },
   loadProfileEdit: function() {
+    // TODO reset form and clear file upload?
     let data = this.userData;
     Object.keys(data).forEach(function(key) {
       let value = data[key];
@@ -187,6 +194,10 @@ let App = {
         element.value = value;
       }
     });
+  },
+  loadAvatars: function() {
+    this.setProfileNavAvatar(this.userData.photoURL);
+    this.setProfileHeaderAvatar(this.userData.photoURL);
   },
 
   bindElements: function() {
@@ -200,8 +211,8 @@ let App = {
     this.$formError = $('#form-error-message').toggle(false);
 
     // generic
-    this.$error = $('#error-message');
-    this.$success = $('#success-message');
+    this.$error = $('.error-message');
+    this.$success = $('.success-message');
 
     // sign up
     this.signupForm = document.getElementById('signupForm');
