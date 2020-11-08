@@ -308,8 +308,8 @@ let App = {
   handleEmailChange: function(event) {
     event.preventDefault();
     event.stopPropagation();
-    let newEmail = $changeEmailForm.find('#name-3').val();
-    let password = $changeEmailForm.find('#name-4').val();
+    let newEmail = this.$changeEmailForm.find('#name-3').val();
+    let password = this.$changeEmailForm.find('#name-4').val();
     this.$success = this.$changeEmailButton.parent().next().find('.success-message');
     this.$error = this.$changeEmailForm.find('.error-message');
 
