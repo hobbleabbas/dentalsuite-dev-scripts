@@ -72,7 +72,7 @@ let App = {
     let avatarRef = storageRef.child(path);
     avatarRef.put(file).then(function(snapshot) {
       avatarRef.getDownloadURL().then(function(url) {
-        this.putInDatabase({photoURL: url});
+        this.putDataInDatabase({photoURL: url});
       }.bind(this)).catch(logError);
     }.bind(this)).catch(logError);
   },
