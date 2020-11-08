@@ -41,30 +41,19 @@ let App = {
   },
   displayError: function(error) {
     this.$success.toggle(false);
-    this.$error.text(error.message).toggle(true);
+    this.$error.text(error.message || error).toggle(true);
+  },
+  displaySuccess: function(message) {
+    this.$error.toggle(false);
+    this.$success.text(message).toggle(true);
   },
 
-  // updateProfile: function(data) {
-  //   this.user.updateProfile(data)
-  //     .then(this.updateUser.bind(this))
-  //     .catch(logError);
-  // },
-  // resetProfileAfterUpdate: function(data) {
-  //   this.$success.toggle(false);
-  //   this.$editProfileForm.toggle(true);
-  //   window.scrollTo(0, 0);
-  //   this.updateUserDataLocal(data);
-  //   this.loadPageData();
-  // },
   updateUserDataLocal: function(data) {
     Object.keys(data).forEach(function(key) {
       let value = data[key];
       this.userData[key] = value;
     }.bind(this));
   },
-  // updateUser: function() {
-  //   this.user = firebase.auth().currentUser;
-  // },
 
   putFileInStorage: function(file) {
     let storageRef = firebase.storage().ref();
@@ -242,6 +231,7 @@ let App = {
     this.$usernameHeader = $('#username-header');
     this.$loadingScreenTop = $('#loading-screen-top');
     this.$loadingScreenBottom = $('#loading-screen-bottom');
+    this.$signoutButton = $('.link-logout');
 
     // profile about
     this.$aboutPhone = $('#about-phone');
@@ -267,7 +257,9 @@ let App = {
     this.$editTwitterUrl = $('#edit-twitter-url');
     this.$editBio = $('#edit-bio');
 
-    this.$signoutButton = $('.link-logout');
+    // account general
+    this.$resetPassword = $('#account-reset-password-link');
+    this.$forgotPassword = $('#forgotPasswordLink');
   },
   bindEventListeners: function() {
     if (this.isSignupPage()) {
@@ -278,6 +270,26 @@ let App = {
     this.$signinGoogleButton.click(this.handleGoogleSignin.bind(this));
     this.$editProfileForm.submit(this.handleProfileEdit.bind(this));
     this.$signoutButton.click(this.handleSignout.bind(this));
+    this.$resetPassword.click(this.handleAccountPasswordReset.bind(this));
+    this.$forgotPassword.click(this.handleForgotPasswordReset.bind(this));
+  },
+  handleAccountPasswordReset: function() {
+    this.sendPasswordResetEmail(this.user.email);
+  },
+  handleForgotPasswordReset: function() {
+    let email = $('#email').val();
+    if (email) {
+      this.sendPasswordResetEmail(email);
+    } else {
+      this.displayError("Please enter your email addres above and click link again.");
+    }
+  },
+  sendPasswordResetEmail: function(email) {
+    firebase.auth().sendPasswordResetEmail(email)
+      .then(function() {
+        alert('Password reset email sent to ' + email);
+      })
+      .catch(this.displayError);
   },
   isProfilePage: function() {
     return location.pathname.includes('profile');
