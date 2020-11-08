@@ -281,7 +281,7 @@ let App = {
     if (email) {
       this.sendPasswordResetEmail(email);
     } else {
-      this.displayError("Please enter your email addres above and click link again.");
+      this.displayError("Please enter your email address above and click link again.");
     }
   },
   sendPasswordResetEmail: function(email) {
