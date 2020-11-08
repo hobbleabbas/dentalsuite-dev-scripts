@@ -292,8 +292,6 @@ let App = {
       email: $('#email').val(),
       password: $('#password').val(),
     };
-    console.log('from handleSignup()');
-    console.log(data);
     this.signup(data);
   },
   handleSignin: function(event) {
@@ -303,8 +301,6 @@ let App = {
       email: $('#email').val(),
       password: $('#password').val(),
     };
-    console.log('from handleSignin()');
-    console.log(data);
     this.signin(data);
   },
   handleGoogleSignin: function(event) {
@@ -335,7 +331,7 @@ let App = {
 };
 
 $(function() {
-  window.app = App.init(); // just for development
+  window.app = App.init(); // development
   // App.init();  // production
 });
 
