@@ -88,7 +88,6 @@ let App = {
           clearTimeout(timeout);
         }
         timeout = setTimeout(function() {
-          window.scrollTo(0, 0);
           location.reload();
           timeout = undefined;
         }.bind(this), FLASH_MESSAGE_DELAY);
@@ -116,6 +115,7 @@ let App = {
     }.bind(this));
   },
   hideLoadingScreen: function() {
+    window.scrollTo(0, 0);
     this.$loadingScreenTop.animate(
       {top: -window.innerHeight},
       LOADING_SCREEN_DELAY,
