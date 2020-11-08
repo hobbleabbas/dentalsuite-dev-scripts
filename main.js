@@ -47,6 +47,18 @@ let App = {
     this.$error.toggle(false);
     this.$success.text(message).toggle(true);
   },
+  isProfilePage: function() {
+    return (location.pathname === "/profile/user-profile");
+  },
+  isAccountSettingsPage: function() {
+    return (location.pathname === "/profile/account-settings/account-settings");
+  },
+  isSigninPage: function() {
+    return !!this.signinForm;
+  },
+  isSignupPage: function() {
+    return !!this.signupForm;
+  },
 
   updateUserDataLocal: function(data) {
     Object.keys(data).forEach(function(key) {
@@ -265,9 +277,14 @@ let App = {
 
     // account
     this.$resetPassword = $('#account-reset-password-link');
+    this.$resetPasswordModal = this.$resetPassword.next();
     this.$forgotPassword = $('#forgotPasswordLink');
     this.$accountEmail = $('#account-email');
     this.$changeEmailButton = $('#change-email-button');
+    this.$changeEmailModal = this.$changeEmailButton.next();
+    this.$changeEmailForm = this.$changeEmailModal.find('.w-form');
+    this.$deleteAccountButton = $('#delete-account-button');
+    this.$deleteAccountModal = this.$deleteAccountButton.next();
   },
   bindEventListeners: function() {
     if (this.isSignupPage()) {
@@ -278,31 +295,43 @@ let App = {
     this.$signinGoogleButton.click(this.handleGoogleSignin.bind(this));
     this.$editProfileForm.submit(this.handleProfileEdit.bind(this));
     this.$signoutButton.click(this.handleSignout.bind(this));
-    this.$changeEmailButton.click(this.handleEmailChange.bind(this));
+    this.$changeEmailButton.click(this.showChangeEmailModal.bind(this));
+    this.$changeEmailForm.get(0).addEventListener('submit', this.handleEmailChange.bind(this), true);
     this.$resetPassword.click(this.handleAccountPasswordReset.bind(this));
     this.$forgotPassword.click(this.handleForgotPasswordReset.bind(this));
+    this.$deleteAccountButton.click(this.handleDeleteAccount.bind(this));
   },
 
-  setErrorAndSuccessBindingsFromEvent: function(event) {
-    this.$success = $(event.currentTarget).parent().next().find('.success-message');
-    this.$error = $(event.currentTarget).parent().next().find('.error-message');
+  showChangeEmailModal: function() {
+    this.$changeEmailModal.fadeIn();
   },
   handleEmailChange: function(event) {
-    let newEmail = prompt("Please enter the email address you would like to use for this account:");
-    this.setErrorAndSuccessBindingsFromEvent(event);
-    this.user.updateEmail(newEmail)
+    event.preventDefault();
+    event.stopPropagation();
+    let newEmail = $changeEmailForm.find('#name-3').val();
+    let password = $changeEmailForm.find('#name-4').val();
+    this.$success = this.$changeEmailButton.parent().next().find('.success-message');
+    this.$error = this.$changeEmailForm.find('.error-message');
+
+    this.user.reauthenticateWithCredential(password)
       .then(function() {
-        this.displaySuccess('Your email address has been updated to ' + newEmail);
-        this.$accountEmail.text(newEmail);
+        this.user.updateEmail(newEmail)
+        .then(function() {
+          this.$changeEmailModal.fadeOut().find('form').get(0).reset();
+          this.displaySuccess('Your email address has been updated to ' + newEmail);
+          this.$accountEmail.text(newEmail);
+        }.bind(this))
+        .catch(this.displayError.bind(this));
       }.bind(this))
       .catch(this.displayError.bind(this));
   },
   handleAccountPasswordReset: function(event) {
-    this.setErrorAndSuccessBindingsFromEvent(event);
+    let $messageParent = $(event.currentTarget).parent(".card-heading").next('.w-form');
+    this.$success = $messageParent.find('.success-message');
+    this.$error = $messageParent.find('.error-message');
     this.sendPasswordResetEmail(this.user.email);
   },
-  handleForgotPasswordReset: function(event) {
-    this.setErrorAndSuccessBindingsFromEvent(event);
+  handleForgotPasswordReset: function() {
     let email = $('#email').val();
     if (email) {
       this.sendPasswordResetEmail(email);
@@ -317,19 +346,9 @@ let App = {
       }.bind(this))
       .catch(this.displayError.bind(this));
   },
-  isProfilePage: function() {
-    return (location.pathname === "/profile/user-profile");
-  },
-  isAccountSettingsPage: function() {
-    return (location.pathname === "/profile/account-settings/account-settings");
-  },
-  isSigninPage: function() {
-    return !!this.signinForm;
-  },
-  isSignupPage: function() {
-    return !!this.signupForm;
-  },
+  handleDeleteAccount: function(event) {
 
+  },
   handleSignout: function(event) {
     event.preventDefault();
     this.signout();
