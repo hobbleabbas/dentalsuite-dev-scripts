@@ -117,14 +117,14 @@ let App = {
       LOADING_SCREEN_DELAY,
       function() {
         this.$loadingScreenTop.toggle(false);
-      }
+      }.bind(this)
     );
     this.$loadingScreenBottom.animate(
       {top: window.innerHeight},
       LOADING_SCREEN_DELAY,
       function() {
         this.$loadingScreenBottom.toggle(false);
-      }
+      }.bind(this)
     );
   },
   authGuardProfile: function() {
