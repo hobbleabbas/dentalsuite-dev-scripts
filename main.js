@@ -90,7 +90,10 @@ let App = {
   },
   getDataFromDatabase: function() {
     let dbRef = firebase.database().ref('users/' + this.user.uid);
-    return dbRef.once('value');
+    dbRef.once('value').then(function(snapshot) {
+      this.userData = snapshot.val() || {};
+      this.loadPageData();
+    }.bind(this)).catch(logError);
   },
 
   setAuthStateListener: function() {
@@ -102,10 +105,7 @@ let App = {
         } else {
           this.toggleNavUserLoggedInWithoutPhoto();
         }
-        this.getDataFromDatabase().then(snapshot => {
-          this.userData = snapshot.val() || {};
-          this.loadPageData();
-        }).catch(logError);
+        this.getDataFromDatabase();
       } else {
         this.user = null;
         this.authGuardProfile();
@@ -152,7 +152,7 @@ let App = {
     this.$userAvatar.attr('src', url);
   },
   setProfileNavName: function() {
-    this.$profileNameButton.text(this.userData['first-name'] || user.email);
+    this.$profileNameButton.text(this.userData['first-name'] || this.user.email);
   },
 
   loadPageData: function() {
