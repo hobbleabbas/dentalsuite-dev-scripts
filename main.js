@@ -189,8 +189,8 @@ let App = {
     });
   },
   loadAvatars: function() {
-    this.setProfileNavAvatar(this.userData.photoURL);
-    this.setProfileHeaderAvatar(this.userData.photoURL);
+    this.setProfileNavAvatar();
+    this.setProfileHeaderAvatar();
   },
 
   bindElements: function() {
