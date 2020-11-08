@@ -156,13 +156,14 @@ let App = {
   loadPageData: function() {
     this.loadAvatars();
     this.setProfileNavName();
-    if (location.pathname === "/profile/user-profile") {
+    if (this.isProfilePage()) {
       this.loadProfileHeader();
       this.loadProfileAbout();
       this.loadProfileEdit();
       this.hideLoadingScreen();
-    } else if (location.pathname === "/profile/account-settings/account-settings") {
+    } else if (this.isAccountSettingsPage()) {
       this.loadAccountInfo();
+      this.hideLoadingScreen();
     }
   },
   loadProfileHeader: function() {
@@ -266,6 +267,7 @@ let App = {
     this.$resetPassword = $('#account-reset-password-link');
     this.$forgotPassword = $('#forgotPasswordLink');
     this.$accountEmail = $('#account-email');
+    this.$changeEmailButton = $('#change-email-button');
   },
   bindEventListeners: function() {
     if (this.isSignupPage()) {
@@ -276,13 +278,31 @@ let App = {
     this.$signinGoogleButton.click(this.handleGoogleSignin.bind(this));
     this.$editProfileForm.submit(this.handleProfileEdit.bind(this));
     this.$signoutButton.click(this.handleSignout.bind(this));
+    this.$changeEmailButton.click(this.handleEmailChange.bind(this));
     this.$resetPassword.click(this.handleAccountPasswordReset.bind(this));
     this.$forgotPassword.click(this.handleForgotPasswordReset.bind(this));
   },
-  handleAccountPasswordReset: function() {
+
+  setErrorAndSuccessBindingsFromEvent: function(event) {
+    this.$success = $(event.currentTarget).parent().next().find('.success-message');
+    this.$error = $(event.currentTarget).parent().next().find('.error-message');
+  },
+  handleEmailChange: function(event) {
+    let newEmail = prompt("Please enter the email address you would like to use for this account:");
+    this.setErrorAndSuccessBindingsFromEvent(event);
+    this.user.updateEmail(newEmail)
+      .then(function() {
+        this.displaySuccess('Your email address has been updated to ' + newEmail);
+        this.$accountEmail.text(newEmail);
+      }.bind(this))
+      .catch(this.displayError.bind(this));
+  },
+  handleAccountPasswordReset: function(event) {
+    this.setErrorAndSuccessBindingsFromEvent(event);
     this.sendPasswordResetEmail(this.user.email);
   },
-  handleForgotPasswordReset: function() {
+  handleForgotPasswordReset: function(event) {
+    this.setErrorAndSuccessBindingsFromEvent(event);
     let email = $('#email').val();
     if (email) {
       this.sendPasswordResetEmail(email);
@@ -293,12 +313,15 @@ let App = {
   sendPasswordResetEmail: function(email) {
     firebase.auth().sendPasswordResetEmail(email)
       .then(function() {
-        alert('Password reset email sent to ' + email);
-      })
-      .catch(this.displayError);
+        this.displaySuccess('Password reset email sent to ' + email);
+      }.bind(this))
+      .catch(this.displayError.bind(this));
   },
   isProfilePage: function() {
-    return location.pathname.includes('profile');
+    return (location.pathname === "/profile/user-profile");
+  },
+  isAccountSettingsPage: function() {
+    return (location.pathname === "/profile/account-settings/account-settings");
   },
   isSigninPage: function() {
     return !!this.signinForm;
