@@ -44,11 +44,11 @@ let App = {
     this.$error.text(error.message).toggle(true);
   },
 
-  updateProfile: function(data) {
-    this.user.updateProfile(data)
-      .then(this.updateUser.bind(this))
-      .catch(logError);
-  },
+  // updateProfile: function(data) {
+  //   this.user.updateProfile(data)
+  //     .then(this.updateUser.bind(this))
+  //     .catch(logError);
+  // },
   // resetProfileAfterUpdate: function(data) {
   //   this.$success.toggle(false);
   //   this.$editProfileForm.toggle(true);
@@ -62,9 +62,9 @@ let App = {
       this.userData[key] = value;
     }.bind(this));
   },
-  updateuser: function() {
-    this.user = firebase.auth().currentUser;
-  },
+  // updateUser: function() {
+  //   this.user = firebase.auth().currentUser;
+  // },
 
   putFileInStorage: function(file) {
     let storageRef = firebase.storage().ref();
@@ -77,22 +77,25 @@ let App = {
     }.bind(this)).catch(logError);
   },
   putDataInDatabase: function(data) {
-    let dbRef = firebase.database().ref();
-    let updates = {};
-    updates['users/' + this.user.uid] = data;
-    dbRef.update(updates, function(error) {
+    this.updateUserDataLocal(data);
+    let dbRef = firebase.database().ref('users/' + this.user.uid);
+    let timeout;
+    dbRef.set(this.userData, function(error) {
       if (error) {
         logError(error);
       } else {
-        setTimeout(function() {
-          // this.resetProfileAfterUpdate(data);
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+        timeout = setTimeout(function() {
           window.scrollTo(0, 0);
           location.reload();
+          timeout = undefined;
         }.bind(this), FLASH_MESSAGE_DELAY);
       }
     }.bind(this));
   },
-  getDataFromDatabase: function() {
+  getDataFromDatabaseAndLoadPageData: function() {
     let dbRef = firebase.database().ref('users/' + this.user.uid);
     dbRef.once('value').then(function(snapshot) {
       this.userData = snapshot.val() || {};
@@ -102,13 +105,12 @@ let App = {
 
   setAuthStateListener: function() {
     firebase.auth().onAuthStateChanged(function(user) {
+      this.user = user;
+      authGuard();
       if (user) {
-        this.user = user;
         this.toggleNavWhenUserLoggedIn();
-        this.getDataFromDatabase();
+        this.getDataFromDatabaseAndLoadPageData();
       } else {
-        this.user = null;
-        this.authGuardProfile();
         this.toggleNavWhenUserLoggedOut();
       }
     }.bind(this));
@@ -129,9 +131,11 @@ let App = {
       }.bind(this)
     );
   },
-  authGuardProfile: function() {
-    if (this.isProfilePage() && !this.user) {
-      redirect('/');
+  authGuard: function() {
+    if ((this.isSigninPage() || this.isSignupPage()) && this.user) {
+      redirectToProfile();
+    } else if (this.isProfilePage() && !this.user) {
+      redirectToHome();
     }
   },
   toggleNavWhenUserLoggedIn: function() {
@@ -192,8 +196,6 @@ let App = {
     });
   },
   loadProfileEdit: function() {
-    // // TODO reset form and clear file upload?
-    // this.$editProfileForm.get(0).reset();
     let data = this.userData;
     Object.keys(data).forEach(function(key) {
       let value = data[key];
