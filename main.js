@@ -1,5 +1,5 @@
 FLASH_MESSAGE_DELAY = 3000;
-LOADING_SCREEN_DELAY = 500;
+LOADING_SCREEN_DELAY = 1000;
 
 let App = {
   user: null,
@@ -49,13 +49,13 @@ let App = {
       .then(this.updateUser.bind(this))
       .catch(logError);
   },
-  resetProfileAfterUpdate: function(data) {
-    this.$success.toggle(false);
-    this.$editProfileForm.toggle(true);
-    window.scrollTo(0, 0);
-    this.updateUserDataLocal(data);
-    this.loadPageData();
-  },
+  // resetProfileAfterUpdate: function(data) {
+  //   this.$success.toggle(false);
+  //   this.$editProfileForm.toggle(true);
+  //   window.scrollTo(0, 0);
+  //   this.updateUserDataLocal(data);
+  //   this.loadPageData();
+  // },
   updateUserDataLocal: function(data) {
     Object.keys(data).forEach(function(key) {
       let value = data[key];
@@ -83,7 +83,9 @@ let App = {
         logError(error);
       } else {
         setTimeout(function() {
-          this.resetProfileAfterUpdate(data);
+          // this.resetProfileAfterUpdate(data);
+          window.scrollTo(0, 0);
+          location.reload();
         }.bind(this), FLASH_MESSAGE_DELAY);
       }
     }.bind(this));
@@ -178,7 +180,8 @@ let App = {
     });
   },
   loadProfileEdit: function() {
-    // TODO reset form and clear file upload?
+    // // TODO reset form and clear file upload?
+    // this.$editProfileForm.get(0).reset();
     let data = this.userData;
     Object.keys(data).forEach(function(key) {
       let value = data[key];
