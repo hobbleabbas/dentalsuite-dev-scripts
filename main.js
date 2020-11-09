@@ -278,7 +278,6 @@ let App = {
     // account
     this.$resetPassword = $('#account-reset-password-link');
     this.$resetPasswordModal = this.$resetPassword.next();
-    this.$forgotPassword = $('#forgotPasswordLink');
     this.$accountEmail = $('#account-email');
     this.$changeEmailButton = $('#change-email-button');
     this.$changeEmailModal = this.$changeEmailButton.next();
@@ -292,13 +291,13 @@ let App = {
     } else if (this.isSigninPage()) {
       this.signinForm.addEventListener('submit', this.handleSignin.bind(this), true);
       this.$signinGoogleButton.click(this.handleGoogleSignin.bind(this));
+      this.$forgotPasswordLink.click(this.handleForgotPasswordReset.bind(this));
     } else if (this.isProfilePage()) {
       this.$editProfileForm.submit(this.handleProfileEdit.bind(this));
     } else if (this.isAccountSettingsPage()) {
       this.$changeEmailButton.click(this.showChangeEmailModal.bind(this));
       this.$changeEmailForm.get(0).addEventListener('submit', this.handleEmailChange.bind(this), true);
       this.$resetPassword.click(this.handleAccountPasswordReset.bind(this));
-      this.$forgotPassword.click(this.handleForgotPasswordReset.bind(this));
       this.$deleteAccountButton.click(this.handleDeleteAccount.bind(this));
     }
     this.$signoutButton.click(this.handleSignout.bind(this));
