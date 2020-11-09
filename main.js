@@ -441,7 +441,7 @@ let App = {
 };
 
 $(function() {
-  window.app = App.init(); // development
+  window.dentalSuiteApp = App.init(); // development
   // App.init();  // production
 });
 
