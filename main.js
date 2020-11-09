@@ -357,6 +357,8 @@ let App = {
     let newPassword = $('#new-password').val();
     let repeatPassword = $('#repeat-password').val();
     let credentials = firebase.auth.EmailAuthProvider.credential(this.user.email, currentPassword);
+    this.$success = this.$updatePasswordForm.next('.success-message');
+    this.$error = this.$updatePasswordForm.next('.error-message');
 
     if (newPassword === repeatPassword) {
       this.user.reauthenticateWithCredential(credentials)
@@ -366,6 +368,7 @@ let App = {
           this.displaySuccess('Your password has been updated.');
           setTimeout(function() {
             this.$updatePasswordForm.get(0).reset();
+            this.$success.toggle(false);
           }.bind(this), SUCCESS_MESSAGE_DELAY);
         }.bind(this))
         .catch(this.displayError.bind(this));
