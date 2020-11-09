@@ -1,4 +1,4 @@
-FLASH_MESSAGE_DELAY = 3000;
+SUCCESS_MESSAGE_DELAY = 3000;
 LOADING_SCREEN_DELAY = 500;
 
 let App = {
@@ -91,7 +91,7 @@ let App = {
         timeout = setTimeout(function() {
           location.reload();
           timeout = undefined;
-        }.bind(this), FLASH_MESSAGE_DELAY);
+        }.bind(this), SUCCESS_MESSAGE_DELAY);
       }
     }.bind(this));
   },
@@ -276,12 +276,13 @@ let App = {
     this.$editBio = $('#edit-bio');
 
     // account
-    this.$resetPassword = $('#account-reset-password-link');
-    this.$resetPasswordModal = this.$resetPassword.next();
-    this.$accountEmail = $('#account-email');
     this.$changeEmailButton = $('#change-email-button');
     this.$changeEmailModal = $('#email-modal');
     this.$changeEmailForm = $('#email-modal-form');
+    this.$accountEmail = $('#account-email');
+    this.$resetPassword = $('#account-reset-password-link');
+    this.$resetPasswordModal = $('#reset-password-modal');
+    this.$resetPasswordForm = $('#reset-password-modal-form');
     this.$deleteAccountButton = $('#delete-account-button');
     this.$deleteAccountModal = this.$deleteAccountButton.next();
   },
@@ -297,7 +298,8 @@ let App = {
     } else if (this.isAccountSettingsPage()) {
       this.$changeEmailButton.click(this.showChangeEmailModal.bind(this));
       this.$changeEmailForm.get(0).addEventListener('submit', this.handleEmailChange.bind(this), true);
-      this.$resetPassword.click(this.handleAccountPasswordReset.bind(this));
+      this.$resetPassword.click(this.showResetPasswordModal.bind(this));
+      this.$resetPasswordForm.submit(this.handleAccountPasswordReset.bind(this));
       this.$deleteAccountButton.click(this.handleDeleteAccount.bind(this));
     }
     this.$signoutButton.click(this.handleSignout.bind(this));
@@ -312,27 +314,37 @@ let App = {
     let newEmail = this.$changeEmailForm.find('#name-3').val();
     let password = this.$changeEmailForm.find('#name-4').val();
     let credentials = firebase.auth.EmailAuthProvider.credential(this.user.email, password);
-    this.$success = $('#personal-settings-form').next('.success-message');
+    this.$success = this.$changeEmailForm.next('.success-message');
     this.$error = this.$changeEmailForm.next('.error-message');
 
     this.user.reauthenticateWithCredential(credentials)
       .then(function() {
         this.user.updateEmail(newEmail)
         .then(function() {
-          this.$changeEmailModal.fadeOut();
-          this.$changeEmailForm.get(0).reset();
           this.displaySuccess('Your email address has been updated to ' + newEmail);
-          this.$accountEmail.text(newEmail);
+          setTimeout(function() {
+            this.$changeEmailModal.fadeOut();
+            this.$changeEmailForm.get(0).reset();
+            this.$accountEmail.text(newEmail);
+          }.bind(this), SUCCESS_MESSAGE_DELAY);
         }.bind(this))
         .catch(this.displayError.bind(this));
       }.bind(this))
       .catch(this.displayError.bind(this));
   },
+  showResetPasswordModal: function(event) {
+    event.preventDefault();
+    this.$resetPasswordModal.fadeIn();
+  },
   handleAccountPasswordReset: function(event) {
-    let $messageParent = $(event.currentTarget).parent(".card-heading").next('.w-form');
-    this.$success = $messageParent.find('.success-message');
-    this.$error = $messageParent.find('.error-message');
-    this.sendPasswordResetEmail(this.user.email);
+    let email = $('#password-reset-email').val();
+    this.$success = this.$resetPasswordForm.next('.success-message');
+    this.$error = this.$resetPasswordForm.next('.error-message');
+    this.sendPasswordResetEmail(email)
+      .then(function() {
+        this.displaySuccess('Password reset email sent to ' + email);
+      }.bind(this))
+      .catch(this.displayError.bind(this));
   },
   handleForgotPasswordReset: function() {
     let email = $('#email').val();
