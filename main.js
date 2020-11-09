@@ -318,8 +318,8 @@ let App = {
     let newEmail = this.$changeEmailForm.find('#name-3').val();
     let password = this.$changeEmailForm.find('#name-4').val();
     let credentials = firebase.auth.EmailAuthProvider.credential(this.user.email, password);
-    this.$success = this.$changeEmailForm.next('.success-message');
-    this.$error = this.$changeEmailForm.next('.error-message');
+    this.$success = this.$changeEmailForm.siblings('.success-message');
+    this.$error = this.$changeEmailForm.siblings('.error-message');
 
     this.user.reauthenticateWithCredential(credentials)
       .then(function() {
@@ -342,8 +342,8 @@ let App = {
   },
   handleAccountPasswordReset: function(event) {
     let email = $('#password-reset-email').val();
-    this.$success = this.$resetPasswordForm.next('.success-message');
-    this.$error = this.$resetPasswordForm.next('.error-message');
+    this.$success = this.$resetPasswordForm.siblings('.success-message');
+    this.$error = this.$resetPasswordForm.siblings('.error-message');
     this.sendPasswordResetEmail(email)
       .then(function() {
         this.displaySuccess('Password reset email sent to ' + email);
@@ -357,8 +357,8 @@ let App = {
     let newPassword = $('#new-password').val();
     let repeatPassword = $('#repeat-password').val();
     let credentials = firebase.auth.EmailAuthProvider.credential(this.user.email, currentPassword);
-    this.$success = this.$updatePasswordForm.next('.success-message');
-    this.$error = this.$updatePasswordForm.next('.error-message');
+    this.$success = this.$updatePasswordForm.siblings('.success-message');
+    this.$error = this.$updatePasswordForm.siblings('.error-message');
 
     if (newPassword === repeatPassword) {
       this.user.reauthenticateWithCredential(credentials)
