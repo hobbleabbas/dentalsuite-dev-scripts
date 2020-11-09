@@ -285,7 +285,8 @@ let App = {
     this.$resetPasswordForm = $('#reset-password-modal-form');
     this.$updatePasswordForm = $('#update-password-form');
     this.$deleteAccountButton = $('#delete-account-button');
-    this.$deleteAccountModal = this.$deleteAccountButton.next();
+    this.$deleteAccountModal = $('#delete-account-modal');
+    this.$deleteAccountConfirm = $('#delete-account-confirm-button');
   },
   bindEventListeners: function() {
     if (this.isSignupPage()) {
@@ -302,7 +303,8 @@ let App = {
       this.$resetPassword.click(this.showResetPasswordModal.bind(this));
       this.$resetPasswordForm.submit(this.handleAccountPasswordReset.bind(this));
       this.$updatePasswordForm.get(0).addEventListener('submit', this.handleUpdatePassword.bind(this), true);
-      this.$deleteAccountButton.click(this.handleDeleteAccount.bind(this));
+      this.$deleteAccountButton.click(this.showDeleteAccountModal.bind(this));
+      this.$deleteAccountConfirm.click(this.handleDeleteAccount.bind(this))
     }
     this.$signoutButton.click(this.handleSignout.bind(this));
   },
@@ -388,8 +390,14 @@ let App = {
       }.bind(this))
       .catch(this.displayError.bind(this));
   },
-  handleDeleteAccount: function(event) {
-
+  showDeleteAccountModal: function() {
+    this.$deleteAccountModal.fadeIn();
+  },
+  handleDeleteAccount: function() {
+    this.$success = $delete
+    this.user.delete().then(function() {
+      redirectToHome();
+    }).catch(logError);
   },
   handleSignout: function(event) {
     event.preventDefault();
@@ -441,7 +449,7 @@ let App = {
 };
 
 $(function() {
-  window.dentalSuiteApp = App.init(); // development
+  window.app = App.init(); // development
   // App.init();  // production
 });
 
