@@ -310,7 +310,7 @@ let App = {
   },
 
   showChangeEmailModal: function() {
-    this.$changeEmailModal.fadeIn();
+    this.$changeEmailModal.attr('style', '').fadeIn();
   },
   handleEmailChange: function(event) {
     event.preventDefault();
@@ -338,7 +338,7 @@ let App = {
   },
   showResetPasswordModal: function(event) {
     event.preventDefault();
-    this.$resetPasswordModal.fadeIn();
+    this.$resetPasswordModal.attr('style', '').fadeIn();
   },
   handleAccountPasswordReset: function(event) {
     let email = $('#password-reset-email').val();
@@ -365,9 +365,9 @@ let App = {
       .then(function() {
         this.user.updatePassword(newPassword)
         .then(function() {
+          this.$updatePasswordForm.get(0).reset();
           this.displaySuccess('Your password has been updated.');
           setTimeout(function() {
-            this.$updatePasswordForm.get(0).reset();
             this.$success.toggle(false);
           }.bind(this), SUCCESS_MESSAGE_DELAY);
         }.bind(this))
@@ -394,7 +394,7 @@ let App = {
       .catch(this.displayError.bind(this));
   },
   showDeleteAccountModal: function() {
-    this.$deleteAccountModal.fadeIn();
+    this.$deleteAccountModal.attr('style', '').fadeIn();
   },
   handleDeleteAccount: function() {
     this.$success = $delete
