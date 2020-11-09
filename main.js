@@ -344,9 +344,14 @@ let App = {
     let email = $('#password-reset-email').val();
     this.$success = this.$resetPasswordForm.siblings('.success-message');
     this.$error = this.$resetPasswordForm.siblings('.error-message');
-    this.sendPasswordResetEmail(email)
+
+    firebase.auth().sendPasswordResetEmail(email)
       .then(function() {
         this.displaySuccess('Password reset email sent to ' + email);
+        setTimeout(function() {
+          this.$resetPasswordForm.get(0).reset();
+          this.$resetPasswordModal.toggle(false);
+        }.bind(this), SUCCESS_MESSAGE_DELAY);
       }.bind(this))
       .catch(this.displayError.bind(this));
   },
@@ -381,17 +386,14 @@ let App = {
   handleForgotPasswordReset: function() {
     let email = $('#email').val();
     if (email) {
-      this.sendPasswordResetEmail(email);
+      firebase.auth().sendPasswordResetEmail(email)
+        .then(function() {
+          this.displaySuccess('Password reset email sent to ' + email);
+        }.bind(this))
+        .catch(this.displayError.bind(this));
     } else {
       this.displayError("Please enter your email address above and click link again.");
     }
-  },
-  sendPasswordResetEmail: function(email) {
-    firebase.auth().sendPasswordResetEmail(email)
-      .then(function() {
-        this.displaySuccess('Password reset email sent to ' + email);
-      }.bind(this))
-      .catch(this.displayError.bind(this));
   },
   showDeleteAccountModal: function() {
     this.$deleteAccountModal.attr('style', '').fadeIn();
