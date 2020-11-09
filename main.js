@@ -397,7 +397,6 @@ let App = {
     this.$deleteAccountModal.attr('style', '').fadeIn();
   },
   handleDeleteAccount: function() {
-    this.$success = $delete
     this.user.delete().then(function() {
       redirectToHome();
     }).catch(logError);
