@@ -349,8 +349,9 @@ let App = {
       .then(function() {
         this.displaySuccess('Password reset email sent to ' + email);
         setTimeout(function() {
-          this.$resetPasswordForm.get(0).reset();
           this.$resetPasswordModal.toggle(false);
+          this.$resetPasswordForm.toggle().get(0).reset();
+          this.$success.toggle(false);
         }.bind(this), SUCCESS_MESSAGE_DELAY);
       }.bind(this))
       .catch(this.displayError.bind(this));
