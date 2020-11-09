@@ -310,10 +310,11 @@ let App = {
     event.stopPropagation();
     let newEmail = this.$changeEmailForm.find('#name-3').val();
     let password = this.$changeEmailForm.find('#name-4').val();
+    let credentials = firebase.auth.EmailAuthProvider.credential(this.user.email, password);
     this.$success = this.$changeEmailButton.parent().next().find('.success-message');
     this.$error = this.$changeEmailForm.find('.error-message');
 
-    this.user.reauthenticateWithCredential(password)
+    this.user.reauthenticateWithCredential(credentials)
       .then(function() {
         this.user.updateEmail(newEmail)
         .then(function() {
