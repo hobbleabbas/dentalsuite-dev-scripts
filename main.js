@@ -283,6 +283,7 @@ let App = {
     this.$resetPassword = $('#account-reset-password-link');
     this.$resetPasswordModal = $('#reset-password-modal');
     this.$resetPasswordForm = $('#reset-password-modal-form');
+    this.$updatePasswordForm = $('#update-password-form');
     this.$deleteAccountButton = $('#delete-account-button');
     this.$deleteAccountModal = this.$deleteAccountButton.next();
   },
@@ -300,6 +301,7 @@ let App = {
       this.$changeEmailForm.get(0).addEventListener('submit', this.handleEmailChange.bind(this), true);
       this.$resetPassword.click(this.showResetPasswordModal.bind(this));
       this.$resetPasswordForm.submit(this.handleAccountPasswordReset.bind(this));
+      this.$updatePasswordForm.get(0).addEventListener('submit', this.handleUpdatePassword.bind(this), true);
       this.$deleteAccountButton.click(this.handleDeleteAccount.bind(this));
     }
     this.$signoutButton.click(this.handleSignout.bind(this));
@@ -345,6 +347,31 @@ let App = {
         this.displaySuccess('Password reset email sent to ' + email);
       }.bind(this))
       .catch(this.displayError.bind(this));
+  },
+  handleUpdatePassword: function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    let currentPassword = $('#current-password').val();
+    let newPassword = $('#new-password').val();
+    let repeatPassword = $('#repeat-password').val();
+    let credentials = firebase.auth.EmailAuthProvider.credential(this.user.email, currentPassword);
+
+    if (newPassword === repeatPassword) {
+      this.user.reauthenticateWithCredential(credentials)
+      .then(function() {
+        this.user.updatePassword(newPassword)
+        .then(function() {
+          this.displaySuccess('Your password has been updated.');
+          setTimeout(function() {
+            this.$updatePasswordForm.get(0).reset();
+          }.bind(this), SUCCESS_MESSAGE_DELAY);
+        }.bind(this))
+        .catch(this.displayError.bind(this));
+      }.bind(this))
+      .catch(this.displayError.bind(this));
+    } else {
+      this.displayError('Passwords do not match.');
+    }
   },
   handleForgotPasswordReset: function() {
     let email = $('#email').val();
