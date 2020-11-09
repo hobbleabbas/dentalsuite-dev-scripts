@@ -280,8 +280,8 @@ let App = {
     this.$resetPasswordModal = this.$resetPassword.next();
     this.$accountEmail = $('#account-email');
     this.$changeEmailButton = $('#change-email-button');
-    this.$changeEmailModal = this.$changeEmailButton.next();
-    this.$changeEmailForm = this.$changeEmailModal.find('.w-form');
+    this.$changeEmailModal = $('#email-modal');
+    this.$changeEmailForm = $('#email-modal-form');
     this.$deleteAccountButton = $('#delete-account-button');
     this.$deleteAccountModal = this.$deleteAccountButton.next();
   },
@@ -312,14 +312,15 @@ let App = {
     let newEmail = this.$changeEmailForm.find('#name-3').val();
     let password = this.$changeEmailForm.find('#name-4').val();
     let credentials = firebase.auth.EmailAuthProvider.credential(this.user.email, password);
-    this.$success = this.$changeEmailButton.parent().next().find('.success-message');
-    this.$error = this.$changeEmailForm.find('.error-message');
+    this.$success = $('#personal-settings-form').next('.success-message');
+    this.$error = this.$changeEmailForm.next('.error-message');
 
     this.user.reauthenticateWithCredential(credentials)
       .then(function() {
         this.user.updateEmail(newEmail)
         .then(function() {
-          this.$changeEmailModal.fadeOut().find('form').get(0).reset();
+          this.$changeEmailModal.fadeOut();
+          this.$changeEmailForm.get(0).reset();
           this.displaySuccess('Your email address has been updated to ' + newEmail);
           this.$accountEmail.text(newEmail);
         }.bind(this))
