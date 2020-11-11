@@ -201,6 +201,7 @@ let App = {
   },
   loadProfileEdit: function() {
     let data = this.userData;
+    destructureBirthdateField(data);
     Object.keys(data).forEach(function(key) {
       let value = data[key];
       let element = document.getElementById('edit-' + key);
@@ -434,6 +435,7 @@ let App = {
     event.preventDefault();
     let form = event.currentTarget;
     let data = getFormData(form);
+    structureBirthdateField(data);
     this.extractAndProcessPhotoFromFormData(data);
     this.putDataInDatabase(data);
   },
@@ -495,4 +497,39 @@ function getFormData(form) {
     data[key] = value;
   }
   return data;
+}
+
+function sortAlpha(a, b) {
+  a = a[0];
+  b = b[0];
+
+  if (a < b) {
+    return -1;
+  } else if (a > b) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+function structureBirthdateField(data) {
+  let fields = {day: '', month: '', year: ''};
+  Object.keys(fields).sort(sortAlpha)
+        .forEach(field => {
+          fields[field] = data['birthdate-' + field];
+          delete data['birthdate-' + field];
+        });
+
+  data.birthdate = Object.values(fields).join('/');
+}
+
+function destructureBirthdateField(data) {
+  let birthdateArray = data.birthdate.split('/');
+  delete data.birthdate;
+
+  let fields = {day: '', month: '', year: ''};
+  Object.keys(fields).sort(sortAlpha)
+        .forEach((field, index) => {
+          data['birthdate-' + field] = birthdateArray[index];
+        });
 }
