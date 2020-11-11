@@ -518,27 +518,27 @@ function structureBirthdateField(data) {
         .forEach(field => {
           let key = 'birthdate-' + field;
           let value = data[key];
-          if (value && !Number.isInteger(Number(value))) {
+          if (Number.isNaN(Number(value))) {
             value = (field === 'year') ? '----' : '--';
           }
           fields[field] = value;
           delete data[key];
         });
 
-  data.birthdate = Object.values(fields).join('/');
+  data.birthdate = Object.values(fields).join(' / ');
 }
 
 function destructureBirthdateField(data) {
   if (data.birthdate) {
-    let birthdateArray = data.birthdate.split('/');
+    let birthdateArray = data.birthdate.split(' / ');
     delete data.birthdate;
   
     let fields = {day: '', month: '', year: ''};
     Object.keys(fields).sort(sortAlpha)
           .forEach((field, index) => {
             let value = birthdateArray[index];
-            if (!Number.isInteger(Number(value))) {
-              value = field.toUpperCase();
+            if (Number.isNaN(Number(value))) {
+              value = field;
             }
             data['birthdate-' + field] = value;
           });
