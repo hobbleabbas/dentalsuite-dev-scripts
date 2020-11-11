@@ -517,13 +517,8 @@ function structureBirthdateField(data) {
   Object.keys(fields).sort(sortAlpha)
         .forEach(field => {
           let key = 'birthdate-' + field;
-          if (data[key]) {
-            fields[field] = data[key];
-            delete data[key];
-          } else {
-            displayError('Please select a value for the birthdate ' + field + 'field.');
-            window.scrollTo(9999999, 0);
-          }
+          fields[field] = data[key] || '--';
+          delete data[key];
         });
 
   data.birthdate = Object.values(fields).join('/');
@@ -537,7 +532,11 @@ function destructureBirthdateField(data) {
     let fields = {day: '', month: '', year: ''};
     Object.keys(fields).sort(sortAlpha)
           .forEach((field, index) => {
-            data['birthdate-' + field] = birthdateArray[index];
+            let value = birthdateArray[index];
+            if (!Number.isInteger(Number(value))) {
+              value = field.toUpperCase();
+            }
+            data['birthdate-' + field] = value;
           });
   }
 }
