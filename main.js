@@ -517,8 +517,8 @@ function structureBirthdateField(data) {
   Object.keys(fields).sort(sortAlpha)
         .forEach(field => {
           let key = 'birthdate-' + field;
-          if (!Number.isInteger(Number(value))) {
-            value = field === 'year' ? '----' : '--';
+          if (value && !Number.isInteger(Number(value))) {
+            value = (field === 'year') ? '----' : '--';
           }
           fields[field] = data[key];
           delete data[key];
