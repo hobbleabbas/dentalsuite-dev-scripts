@@ -20,7 +20,6 @@ let App = {
       .then(function(result) {
         this.user = result.user;
         this.addDisplayNameAndPhotoUrlToDatabase(this.user);
-        redirectToProfile();
       }.bind(this)).catch(this.displayError.bind(this));
   },
   addDisplayNameAndPhotoUrlToDatabase: function(user) {
@@ -28,7 +27,7 @@ let App = {
       let names = user.displayName.split(' ');
       let firstName = names[0];
       let lastName = names.slice(1).join(' ');
-      user.putDataInDatabase({
+      this.putDataInDatabase({
         'first-name': firstName,
         'last-name': lastName,
         photoURL: user.photoURL
