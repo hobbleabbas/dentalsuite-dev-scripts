@@ -110,7 +110,6 @@ let App = {
   setAuthStateListener: function() {
     firebase.auth().onAuthStateChanged(function(user) {
       this.user = user;
-      this.setProfileNavName();
       if (user) {
         this.toggleNavWhenUserLoggedIn();
         this.getDataFromDatabaseAndLoadPageData();
@@ -151,21 +150,15 @@ let App = {
     this.$navProfileButton.toggle(false);
     this.$navLoginButton.toggle(true);
   },
-  setProfileHeaderAvatar: function() {
-    let data = this.userData;
-    if (data) {
-      this.$userAvatar.attr('src', data.photoURL);
-    }
-  },
   setProfileNavName: function() {
     this.$navProfileButton.text(this.userData['first-name'] || 'Profile');
   },
 
   loadPageData: function() {
     this.authGuard();
-    this.loadAvatars();
     this.setProfileNavName();
     if (this.isProfilePage()) {
+      this.loadAvatar();
       this.loadProfileHeader();
       this.loadProfileAbout();
       this.loadProfileEdit();
@@ -206,8 +199,11 @@ let App = {
       }
     });
   },
-  loadAvatars: function() {
-    this.setProfileHeaderAvatar();
+  loadAvatar: function() {
+    let data = this.userData;
+    if (data) {
+      this.$userAvatar.attr('src', data.photoURL);
+    }
   },
   loadAccountInfo: function() {
     this.$accountEmail.text(this.user.email);
