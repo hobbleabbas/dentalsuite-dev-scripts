@@ -19,10 +19,12 @@ let App = {
     firebase.auth().signInWithPopup(provider)
       .then(function(result) {
         this.user = result.user;
-        this.addDisplayNameAndPhotoUrlToDatabase(this.user);
+        this.addDisplayNameAndPhotoUrlToDatabase();
+        redirectToProfile();
       }.bind(this)).catch(this.displayError.bind(this));
   },
-  addDisplayNameAndPhotoUrlToDatabase: function(user) {
+  addDisplayNameAndPhotoUrlToDatabase: function() {
+    let user = this.user;
     if (user.displayName) {
       let names = user.displayName.split(' ');
       let firstName = names[0];
@@ -64,6 +66,7 @@ let App = {
       let value = data[key];
       this.userData[key] = value;
     }.bind(this));
+    this.loadPageData();
   },
 
   putFileInStorage: function(file) {
@@ -79,15 +82,11 @@ let App = {
   putDataInDatabase: function(data) {
     this.updateUserDataLocal(data);
     let dbRef = firebase.database().ref('users/' + this.user.uid);
-    let timeout;
     dbRef.set(this.userData, function(error) {
       if (error) {
         logError(error);
       } else {
-        if (timeout) {
-          clearTimeout(timeout);
-        }
-        timeout = setTimeout(function() {
+        setTimeout(function() {
           location.reload();
           timeout = undefined;
         }.bind(this), SUCCESS_MESSAGE_DELAY);
@@ -105,7 +104,6 @@ let App = {
   setAuthStateListener: function() {
     firebase.auth().onAuthStateChanged(function(user) {
       this.user = user;
-      this.authGuard();
       if (user) {
         this.toggleNavWhenUserLoggedIn();
         this.getDataFromDatabaseAndLoadPageData();
@@ -165,6 +163,7 @@ let App = {
   },
 
   loadPageData: function() {
+    this.authGuard();
     this.loadAvatars();
     this.setProfileNavName();
     if (this.isProfilePage()) {
