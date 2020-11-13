@@ -1,5 +1,6 @@
 SUCCESS_MESSAGE_DELAY = 3000;
 LOADING_SCREEN_DELAY = 500;
+LOGGING_ENABLED = true;
 
 let App = {
   user: null,
@@ -15,6 +16,7 @@ let App = {
       .catch(this.displayError.bind(this));
   },
   signinGoogle: function() {
+    log('Signing user in with Google Auth provider.')
     var provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithPopup(provider)
       .then(function(result) {
@@ -29,6 +31,7 @@ let App = {
       let names = user.displayName.split(' ');
       let firstName = names[0];
       let lastName = names.slice(1).join(' ');
+      log('Adding displayName and photoURL to database.');
       this.putDataInDatabase({
         'first-name': firstName,
         'last-name': lastName,
@@ -62,6 +65,8 @@ let App = {
   },
 
   updateUserDataLocal: function(data) {
+    log('Adding the following to user\'s local data store...');
+    log(data);
     Object.keys(data).forEach(function(key) {
       let value = data[key];
       this.userData[key] = value;
@@ -82,6 +87,8 @@ let App = {
   putDataInDatabase: function(data) {
     this.updateUserDataLocal(data);
     let dbRef = firebase.database().ref('users/' + this.user.uid);
+    log('Adding the following to database...');
+    log(data);
     dbRef.set(this.userData, function(error) {
       if (error) {
         logError(error);
@@ -454,7 +461,7 @@ $(function() {
 
 function redirect(path) {
   if (location.pathname !== path) {
-    console.log('redirecting from ' + location.pathname + ' to ' + path);
+    log('redirecting from ' + location.pathname + ' to ' + path);
     location.pathname = path;
   }
 }
@@ -468,7 +475,9 @@ function redirectToProfile() {
 }
 
 function log(message) {
-  console.log(message);
+  if (LOGGING_ENABLED) {
+    console.log(message);
+  }
 }
 
 function logError(error) {
@@ -489,17 +498,4 @@ function getFormData(form) {
     data[key] = value;
   }
   return data;
-}
-
-function sortAlpha(a, b) {
-  a = a[0];
-  b = b[0];
-
-  if (a < b) {
-    return -1;
-  } else if (a > b) {
-    return 1;
-  } else {
-    return 0;
-  }
 }
