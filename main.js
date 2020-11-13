@@ -120,6 +120,9 @@ let App = {
     if (!data.photoURL) {
       data.photoURL = user.photoURL;
     }
+    if (!data['contact-email']) {
+      data['contact-email'] = user.email;
+    }
   },
 
   setAuthStateListener: function() {
