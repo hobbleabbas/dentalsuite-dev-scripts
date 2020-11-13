@@ -7,12 +7,12 @@ let App = {
 
   signup: function(data) {
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
-      .then(redirectToProfile)
+      // .then(redirectToProfile)
       .catch(this.displayError.bind(this));
   },
   signin: function(data) {
     firebase.auth().signInWithEmailAndPassword(data.email, data.password)
-      .then(redirectToProfile)
+      // .then(redirectToProfile)
       .catch(this.displayError.bind(this));
   },
   signinGoogle: function() {
@@ -21,24 +21,24 @@ let App = {
     firebase.auth().signInWithPopup(provider)
       .then(function(result) {
         this.user = result.user;
-        this.addDisplayNameAndPhotoUrlToDatabase();
-        redirectToProfile();
+        // this.addDisplayNameAndPhotoUrlToDatabase();
+        // redirectToProfile();
       }.bind(this)).catch(this.displayError.bind(this));
   },
-  addDisplayNameAndPhotoUrlToDatabase: function() {
-    let user = this.user;
-    if (user.displayName) {
-      let names = user.displayName.split(' ');
-      let firstName = names[0];
-      let lastName = names.slice(1).join(' ');
-      log('Adding displayName and photoURL to database.');
-      this.putDataInDatabase({
-        'first-name': firstName,
-        'last-name': lastName,
-        photoURL: user.photoURL
-      });
-    }
-  },
+  // addDisplayNameAndPhotoUrlToDatabase: function() {
+  //   let user = this.user;
+  //   if (user.displayName) {
+  //     let names = user.displayName.split(' ');
+  //     let firstName = names[0];
+  //     let lastName = names.slice(1).join(' ');
+  //     log('Adding displayName and photoURL to database.');
+  //     this.putDataInDatabase({
+  //       'first-name': firstName,
+  //       'last-name': lastName,
+  //       photoURL: user.photoURL
+  //     });
+  //   }
+  // },
   signout: function() {
     firebase.auth().signOut();
     redirectToHome();
@@ -104,8 +104,22 @@ let App = {
     let dbRef = firebase.database().ref('users/' + this.user.uid);
     dbRef.once('value').then(function(snapshot) {
       this.userData = snapshot.val() || {};
+      this.pullDisplayNameAndPhotoUrlFromGoogleSignin();
       this.loadPageData();
     }.bind(this)).catch(logError);
+  },
+
+  pullDisplayNameAndPhotoUrlFromGoogleSignin() {
+    let data = this.userData,
+        user = this.user;
+    if (!data.firstName && !data.lastName) {
+      let names = user.displayName.split(' ');
+      data.firstName = names.shift();
+      data.lastName = names.join(' ');
+    }
+    if (!data.photoURL) {
+      data.photoURL = user.photoURL;
+    }
   },
 
   setAuthStateListener: function() {
