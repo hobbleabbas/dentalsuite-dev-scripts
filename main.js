@@ -175,8 +175,7 @@ let App = {
     let displayName = (firstName + ' ' + lastName).trim();
     let headerText = displayName ? `Hello there, ${displayName}` : 'Hello there!';
     this.$welcomeHeading.text(headerText);
-    let photoURL = data.photoURL || DEFAULT_PROFILE_PHOTO_URL;
-    this.$userAvatar.attr('src', photoURL);
+    this.$userAvatar.attr('src', data.photoURL);
     this.$usernameHeader.text(displayName);
   },
   loadProfileAbout: function() {
