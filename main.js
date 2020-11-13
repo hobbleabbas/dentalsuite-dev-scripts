@@ -199,7 +199,6 @@ let App = {
   },
   loadProfileEdit: function() {
     let data = this.userData;
-    destructureBirthdateField(data);
     Object.keys(data).forEach(function(key) {
       let value = data[key];
       let element = document.getElementById('edit-' + key);
@@ -252,7 +251,6 @@ let App = {
 
     // profile about
     this.$aboutPhone = $('#about-phone');
-    this.$aboutBirthdate = $('#about-birthdate');
     this.$aboutContactEmail = $('#about-contact-email');
     this.$aboutLocation = $('#about-location');
     this.$aboutPosition = $('#about-position');
@@ -263,9 +261,6 @@ let App = {
     this.$editPhotoUpload = $('#photo-upload');
     this.$editFirstName = $('#edit-first-name');
     this.$editLastName = $('#edit-last-name');
-    this.$editBirthdateDay = $('#edit-birthdate-day');
-    this.$editBirthdateMonth = $('#edit-birthdate-month');
-    this.$editBirthdateYear = $('#edit-birthdate-year');
     this.$editLocation = $('#edit-location');
     this.$editContactEmail = $('#edit-contact-email');
     this.$editPhone = $('#edit-phone');
@@ -433,7 +428,6 @@ let App = {
     event.preventDefault();
     let form = event.currentTarget;
     let data = getFormData(form);
-    structureBirthdateField(data);
     this.extractAndProcessPhotoFromFormData(data);
     this.putDataInDatabase(data);
   },
@@ -507,38 +501,5 @@ function sortAlpha(a, b) {
     return 1;
   } else {
     return 0;
-  }
-}
-
-function structureBirthdateField(data) {
-  let fields = {day: '', month: '', year: ''};
-  Object.keys(fields).sort(sortAlpha)
-        .forEach(field => {
-          let key = 'birthdate-' + field;
-          let value = data[key];
-          if (Number.isNaN(Number(value))) {
-            value = (field === 'year') ? '----' : '--';
-          }
-          fields[field] = value;
-          delete data[key];
-        });
-
-  data.birthdate = Object.values(fields).join(' / ');
-}
-
-function destructureBirthdateField(data) {
-  if (data.birthdate) {
-    let birthdateArray = data.birthdate.split(' / ');
-    delete data.birthdate;
-  
-    let fields = {day: '', month: '', year: ''};
-    Object.keys(fields).sort(sortAlpha)
-          .forEach((field, index) => {
-            let value = birthdateArray[index];
-            if (Number.isNaN(Number(value))) {
-              value = field;
-            }
-            data['birthdate-' + field] = value;
-          });
   }
 }
