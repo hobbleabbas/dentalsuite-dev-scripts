@@ -7,12 +7,10 @@ let App = {
 
   signup: function(data) {
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
-      // .then(redirectToProfile)
       .catch(this.displayError.bind(this));
   },
   signin: function(data) {
     firebase.auth().signInWithEmailAndPassword(data.email, data.password)
-      // .then(redirectToProfile)
       .catch(this.displayError.bind(this));
   },
   signinGoogle: function() {
@@ -21,24 +19,8 @@ let App = {
     firebase.auth().signInWithPopup(provider)
       .then(function(result) {
         this.user = result.user;
-        // this.addDisplayNameAndPhotoUrlToDatabase();
-        // redirectToProfile();
       }.bind(this)).catch(this.displayError.bind(this));
   },
-  // addDisplayNameAndPhotoUrlToDatabase: function() {
-  //   let user = this.user;
-  //   if (user.displayName) {
-  //     let names = user.displayName.split(' ');
-  //     let firstName = names[0];
-  //     let lastName = names.slice(1).join(' ');
-  //     log('Adding displayName and photoURL to database.');
-  //     this.putDataInDatabase({
-  //       'first-name': firstName,
-  //       'last-name': lastName,
-  //       photoURL: user.photoURL
-  //     });
-  //   }
-  // },
   signout: function() {
     firebase.auth().signOut();
     redirectToHome();
@@ -128,6 +110,7 @@ let App = {
   setAuthStateListener: function() {
     firebase.auth().onAuthStateChanged(function(user) {
       this.user = user;
+      this.setProfileNavName();
       if (user) {
         this.toggleNavWhenUserLoggedIn();
         this.getDataFromDatabaseAndLoadPageData();
@@ -161,29 +144,21 @@ let App = {
     }
   },
   toggleNavWhenUserLoggedIn: function() {
-    this.$loginButton.toggle(false);
-    this.setProfileNavAvatar();
-    this.$profileAvatarNameSection.toggle(true);
+    this.$navLoginButton.toggle(false);
+    this.$navProfileButton.toggle(true);
   },
   toggleNavWhenUserLoggedOut: function() {
-    this.$profileNameButton.text('User Name');
-    this.setProfileNavAvatar();
-    this.$profileAvatarNameSection.toggle(false);
-    this.$loginButton.toggle(true);
-  },
-  setProfileNavAvatar: function() {
-    let data = this.userData;
-    let url = (data && data.photoURL) || DEFAULT_PROFILE_PHOTO_URL;
-    let attribute = {style: `background-image: url(${url})`};
-    this.$profileAvatarButton.attr(attribute);
+    this.$navProfileButton.toggle(false);
+    this.$navLoginButton.toggle(true);
   },
   setProfileHeaderAvatar: function() {
     let data = this.userData;
-    let url = (data && data.photoURL) || DEFAULT_PROFILE_PHOTO_URL;
-    this.$userAvatar.attr('src', url);
+    if (data) {
+      this.$userAvatar.attr('src', data.photoURL);
+    }
   },
   setProfileNavName: function() {
-    this.$profileNameButton.text(this.userData['first-name'] || this.user.email);
+    this.$navProfileButton.text(this.userData['first-name'] || 'Profile');
   },
 
   loadPageData: function() {
@@ -232,7 +207,6 @@ let App = {
     });
   },
   loadAvatars: function() {
-    this.setProfileNavAvatar();
     this.setProfileHeaderAvatar();
   },
   loadAccountInfo: function() {
@@ -241,10 +215,8 @@ let App = {
 
   bindElements: function() {
     // nav
-    this.$loginButton = $('#login-button');
-    this.$profileAvatarButton = $('#profile-avatar-button');
-    this.$profileNameButton = $('#profile-name-button');
-    this.$profileAvatarNameSection = $('#profile-avatar-and-name');
+    this.$navLoginButton = $('#nav-login-button');
+    this.$navProfileButton = $('#nav-profile-button');
 
     // signup/signin general
     this.$formError = $('#form-error-message').toggle(false);
