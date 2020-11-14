@@ -1,16 +1,30 @@
-SUCCESS_MESSAGE_DELAY = 3000;
-LOADING_SCREEN_DELAY = 500;
-LOGGING_ENABLED = true;
+const SUCCESS_MESSAGE_DELAY = 1000;
+const AUTH_STATE_DELAY = 1000;
+const LOADING_SCREEN_DELAY = 500;
+const LOGGING_ENABLED = true;
 
 let App = {
   user: null,
 
   signup: function(data) {
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
+      .then(function() {
+
+      }.bind(this))
       .catch(this.displayError.bind(this));
   },
   signin: function(data) {
-    firebase.auth().signInWithEmailAndPassword(data.email, data.password)
+    let persistence;
+    if (data.remember) {
+      persistence = firebase.auth.Auth.Persistence.LOCAL;
+    } else {
+      persistence = firebase.auth.Auth.Persistence.SESSION;
+    }
+    firebase.auth().setPersistence(persistence)
+      .then(function() {
+        firebase.auth().signInWithEmailAndPassword(data.email, data.password)
+        .catch(this.displayError.bind(this));
+      }.bind(this))
       .catch(this.displayError.bind(this));
   },
   signinGoogle: function() {
@@ -118,7 +132,7 @@ let App = {
           this.toggleNavWhenUserLoggedOut();
         }
       }.bind(this));
-    }.bind(this), 1000);
+    }.bind(this), AUTH_STATE_DELAY);
   },
   hideLoadingScreen: function() {
     window.scrollTo(0, 0);
@@ -213,8 +227,9 @@ let App = {
   loadNavAvatar: function() {
     let photoURL = this.userData.photoURL;
     if (photoURL) {
-      this.$profileAvatarButton.attr({
-        'style': 'background-image: url(' + photoURL + ');'
+      this.$profileAvatarButton.css({
+        'background-image': 'url(' + photoURL + ')',
+        'background-position': 'center',
       });
     } else {
       this.$profileAvatarButton.toggle(false);
@@ -420,20 +435,15 @@ let App = {
   handleSignup: function(event) {
     event.preventDefault();
     event.stopPropagation();
-    let data = {
-      email: $('#email').val(),
-      password: $('#password').val(),
-      'practitioner-type': $('#practitioner-type').val(),
-    };
+    let form = event.currentTarget;
+    let data = getFormData(form);
     this.signup(data);
   },
   handleSignin: function(event) {
     event.preventDefault();
     event.stopPropagation();
-    let data = {
-      email: $('#email').val(),
-      password: $('#password').val(),
-    };
+    let form = event.currentTarget;
+    let data = getFormData(form);
     this.signin(data);
   },
   handleGoogleSignin: function(event) {
