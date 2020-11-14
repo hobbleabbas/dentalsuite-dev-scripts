@@ -5,7 +5,7 @@ const LOGGING_ENABLED = true;
 
 let App = {
   user: null,
-  stagedDataForDatabase = null,
+  stagedDataForDatabase: null,
 
   signup: function(data) {
     this.stagedDataForDatabase = {
