@@ -11,9 +11,6 @@ let App = {
       'practitioner-type': data['practitioner-type']
     }
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
-      .then(function() {
-
-      }.bind(this))
       .catch(this.displayError.bind(this));
   },
   signin: function(data) {
@@ -83,7 +80,7 @@ let App = {
       }.bind(this)).catch(logError);
     }.bind(this)).catch(logError);
   },
-  putDataInDatabase: function(data) {
+  putDataInDatabase: function(data, callback) {
     this.updateUserDataLocal(data);
     let dbRef = firebase.database().ref('users/' + this.user.uid);
     log('Adding the following to database...');
@@ -92,11 +89,12 @@ let App = {
       if (error) {
         logError(error);
       } else {
-        setTimeout(function() {
-          location.reload();
-        }.bind(this), SUCCESS_MESSAGE_DELAY);
+        callback();
       }
     }.bind(this));
+  },
+  waitOnDatabaseTransfer: function() {
+
   },
   getDataFromDatabaseAndLoadPageData: function() {
     let dbRef = firebase.database().ref('users/' + this.user.uid);
@@ -124,22 +122,28 @@ let App = {
   },
 
   setAuthStateListener: function() {
-    if (this.stagedDataForDatabase) {
-      this.putDataInDatabase(this.stagedDataForDatabase);
-      delete this.stagedDataForDatabase;
-    }
+    firebase.auth().onAuthStateChanged(function(user) {
+      let data;
+      if (this.stagedDataForDatabase) {
+        data = this.stagedDataForDatabase;
+        delete this.stagedDataForDatabase;
+      }
 
-    setTimeout(function() {
-      firebase.auth().onAuthStateChanged(function(user) {
-        this.user = user;
-        if (user) {
-          this.toggleNavWhenUserLoggedIn();
-          this.getDataFromDatabaseAndLoadPageData();
-        } else {
-          this.toggleNavWhenUserLoggedOut();
-        }
-      }.bind(this));
-    }.bind(this), AUTH_STATE_DELAY);
+      if (data) {
+        this.putDataInDatabase(data, this.handleAuthState.bind(this));
+      } else {
+        this.handleAuthState();
+      }
+    }.bind(this));
+  },
+  handleAuthState: function() {
+    this.user = user;
+    if (user) {
+      this.toggleNavWhenUserLoggedIn();
+      this.getDataFromDatabaseAndLoadPageData();
+    } else {
+      this.toggleNavWhenUserLoggedOut();
+    }
   },
   hideLoadingScreen: function() {
     window.scrollTo(0, 0);
@@ -462,7 +466,11 @@ let App = {
     let form = event.currentTarget;
     let data = getFormData(form);
     this.extractAndProcessPhotoFromFormData(data);
-    this.putDataInDatabase(data);
+    this.putDataInDatabase(data, function() {
+      setTimeout(function () {
+        location.reload();
+      }, SUCCESS_MESSAGE_DELAY);
+    });
   },
   extractAndProcessPhotoFromFormData: function(data) {
     if (data['photo-upload'].name) {
