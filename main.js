@@ -108,15 +108,17 @@ let App = {
   },
 
   setAuthStateListener: function() {
-    firebase.auth().onAuthStateChanged(function(user) {
-      this.user = user;
-      if (user) {
-        this.toggleNavWhenUserLoggedIn();
-        this.getDataFromDatabaseAndLoadPageData();
-      } else {
-        this.toggleNavWhenUserLoggedOut();
-      }
-    }.bind(this));
+    setTimeout(function() {
+      firebase.auth().onAuthStateChanged(function(user) {
+        this.user = user;
+        if (user) {
+          this.toggleNavWhenUserLoggedIn();
+          this.getDataFromDatabaseAndLoadPageData();
+        } else {
+          this.toggleNavWhenUserLoggedOut();
+        }
+      }.bind(this));
+    }.bind(this), 1000);
   },
   hideLoadingScreen: function() {
     window.scrollTo(0, 0);
@@ -421,6 +423,7 @@ let App = {
     let data = {
       email: $('#email').val(),
       password: $('#password').val(),
+      'practitioner-type': $('#practitioner-type').val(),
     };
     this.signup(data);
   },
