@@ -158,15 +158,19 @@ let App = {
     this.authGuard();
     this.setProfileNavName();
     if (this.isProfilePage()) {
-      this.loadAvatar();
+      this.loadProfileNav();
       this.loadProfileHeader();
       this.loadProfileAbout();
       this.loadProfileEdit();
-      this.hideLoadingScreen();
     } else if (this.isAccountSettingsPage()) {
+      this.loadProfileNav();
       this.loadAccountInfo();
-      this.hideLoadingScreen();
     }
+    this.hideLoadingScreen();
+  },
+  loadProfileNav: function() {
+    this.loadNavAvatar();
+    this.loadNavName();
   },
   loadProfileHeader: function() {
     let data = this.userData;
@@ -175,10 +179,8 @@ let App = {
     let displayName = (firstName + ' ' + lastName).trim();
     let headerText = displayName ? `Hello there, ${displayName}` : 'Hello there!';
     this.$welcomeHeading.text(headerText);
-    this.$userAvatar.attr('src', data.photoURL);
     this.$usernameHeader.text(displayName);
-    this.loadNavAvatar();
-    this.loadNavName();
+    this.loadAvatar();
   },
   loadProfileAbout: function() {
     let data = this.userData;
@@ -209,15 +211,15 @@ let App = {
   loadNavAvatar: function() {
     let photoURL = this.userData.photoURL;
     if (photoURL) {
-      this.$profileAvatarButton.css({
-        'background-image': 'url(' + photoURL + ');'
+      this.$profileAvatarButton.attr({
+        'style': 'background-image: url(' + photoURL + ');'
       });
     } else {
       this.$profileAvatarButton.toggle(false);
     }
   },
   loadNavName: function() {
-    let name = this.userData.firstName;
+    let name = this.userData['first-name'];
     if (name) {
       this.$profileNameButton.text(name);
     }
