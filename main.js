@@ -124,13 +124,9 @@ let App = {
   setAuthStateListener: function() {
     firebase.auth().onAuthStateChanged(function(user) {
       this.user = user;
-      let data;
       if (this.stagedDataForDatabase) {
-        data = this.stagedDataForDatabase;
+        let data = this.stagedDataForDatabase;
         delete this.stagedDataForDatabase;
-      }
-
-      if (data) {
         this.putDataInDatabase(data, this.handleAuthState.bind(this));
       } else {
         this.handleAuthState();
