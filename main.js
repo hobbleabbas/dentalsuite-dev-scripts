@@ -177,6 +177,8 @@ let App = {
     this.$welcomeHeading.text(headerText);
     this.$userAvatar.attr('src', data.photoURL);
     this.$usernameHeader.text(displayName);
+    this.loadNavAvatar();
+    this.loadNavName();
   },
   loadProfileAbout: function() {
     let data = this.userData;
@@ -202,6 +204,22 @@ let App = {
     let data = this.userData;
     if (data) {
       this.$userAvatar.attr('src', data.photoURL);
+    }
+  },
+  loadNavAvatar: function() {
+    let photoURL = this.userData.photoURL;
+    if (photoURL) {
+      this.$profileAvatarButton.css({
+        'background-image': 'url(' + photoURL + ');'
+      });
+    } else {
+      this.$profileAvatarButton.toggle(false);
+    }
+  },
+  loadNavName: function() {
+    let name = this.userData.firstName;
+    if (name) {
+      this.$profileNameButton.text(name);
     }
   },
   loadAccountInfo: function() {
@@ -231,6 +249,8 @@ let App = {
     this.$forgotPasswordLink = $('#forgotPasswordLink');
 
     // profile general
+    this.$profileAvatarButton = $('#profile-avatar-button');
+    this.$profileNameButton = $('#profile-name-button');
     this.$welcomeHeading = $('#welcome-heading');
     this.$backgroundHeaderImage = $('#background-header-image');
     this.$editBackgroundImageButton =$('#edit-background-image');
