@@ -127,7 +127,7 @@ let App = {
   setAuthStateListener: function() {
     firebase.auth().onAuthStateChanged(function(user) {
       this.user = user;
-      if (Object.keys(this.stagedDataForDatabase).length === 0) {
+      if (Object.keys(this.stagedDataForDatabase).length !== 0) {
         let data = this.stagedDataForDatabase;
         this.stagedDataForDatabase = {};
         this.putDataInDatabase(data, this.handleAuthState.bind(this));
