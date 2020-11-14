@@ -6,7 +6,7 @@ const LOGGING_ENABLED = true;
 let App = {
   user: null,
   userData: {},
-  stagedDataForDatabase: null,
+  stagedDataForDatabase: {},
 
   signup: function(data) {
     this.stagedDataForDatabase = {
@@ -85,8 +85,8 @@ let App = {
   putDataInDatabase: function(data, callback) {
     this.updateUserDataLocal(data);
     let dbRef = firebase.database().ref('users/' + this.user.uid);
-    log('Adding the following to database...');
-    log(data);
+    log('Updating database with the following data...');
+    log(this.userData);
     dbRef.set(this.userData, function(error) {
       if (error) {
         logError(error);
@@ -101,13 +101,13 @@ let App = {
   getDataFromDatabaseAndLoadPageData: function() {
     let dbRef = firebase.database().ref('users/' + this.user.uid);
     dbRef.once('value').then(function(snapshot) {
-      this.userData = snapshot.val();
-      this.pullDisplayNameAndPhotoUrlFromGoogleSignin();
+      this.userData = snapshot.val() || {};
+      this.pullNameAndPhotoFromFirebaseProfile();
       this.loadPageData();
     }.bind(this)).catch(logError);
   },
 
-  pullDisplayNameAndPhotoUrlFromGoogleSignin() {
+  pullNameAndPhotoFromFirebaseProfile() {
     let data = this.userData,
         user = this.user;
     
