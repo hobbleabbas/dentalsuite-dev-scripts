@@ -5,6 +5,7 @@ const LOGGING_ENABLED = true;
 
 let App = {
   user: null,
+  stagedDataForDatabase = null,
 
   signup: function(data) {
     this.stagedDataForDatabase = {
@@ -140,6 +141,7 @@ let App = {
     } else {
       this.toggleNavWhenUserLoggedOut();
     }
+    this.authGuard();
   },
   hideLoadingScreen: function() {
     window.scrollTo(0, 0);
@@ -178,7 +180,6 @@ let App = {
   },
 
   loadPageData: function() {
-    this.authGuard();
     this.setProfileNavName();
     if (this.isProfilePage()) {
       this.loadProfileNav();
