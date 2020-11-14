@@ -7,6 +7,9 @@ let App = {
   user: null,
 
   signup: function(data) {
+    this.stagedDataForDatabase = {
+      'practitioner-type': data['practitioner-type']
+    }
     firebase.auth().createUserWithEmailAndPassword(data.email, data.password)
       .then(function() {
 
@@ -91,7 +94,6 @@ let App = {
       } else {
         setTimeout(function() {
           location.reload();
-          timeout = undefined;
         }.bind(this), SUCCESS_MESSAGE_DELAY);
       }
     }.bind(this));
@@ -122,6 +124,11 @@ let App = {
   },
 
   setAuthStateListener: function() {
+    if (this.stagedDataForDatabase) {
+      this.putDataInDatabase(this.stagedDataForDatabase);
+      delete this.stagedDataForDatabase;
+    }
+
     setTimeout(function() {
       firebase.auth().onAuthStateChanged(function(user) {
         this.user = user;
