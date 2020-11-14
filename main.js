@@ -127,7 +127,7 @@ let App = {
   setAuthStateListener: function() {
     firebase.auth().onAuthStateChanged(function(user) {
       this.user = user;
-      if (this.stagedDataForDatabase.notEmpty()) {
+      if (Object.keys(this.stagedDataForDatabase).length === 0) {
         let data = this.stagedDataForDatabase;
         this.stagedDataForDatabase = {};
         this.putDataInDatabase(data, this.handleAuthState.bind(this));
@@ -531,10 +531,4 @@ function getFormData(form) {
     data[key] = value;
   }
   return data;
-}
-
-if (!Object.prototype.notEmpty) {
-  Object.prototype.notEmpty = function() {
-    return Object.keys(this).length === 0;
-  }
 }
