@@ -123,6 +123,7 @@ let App = {
 
   setAuthStateListener: function() {
     firebase.auth().onAuthStateChanged(function(user) {
+      this.user = user;
       let data;
       if (this.stagedDataForDatabase) {
         data = this.stagedDataForDatabase;
@@ -137,8 +138,7 @@ let App = {
     }.bind(this));
   },
   handleAuthState: function() {
-    this.user = user;
-    if (user) {
+    if (this.user) {
       this.toggleNavWhenUserLoggedIn();
       this.getDataFromDatabaseAndLoadPageData();
     } else {
