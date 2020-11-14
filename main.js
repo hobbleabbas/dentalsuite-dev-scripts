@@ -110,7 +110,8 @@ let App = {
   pullDisplayNameAndPhotoUrlFromGoogleSignin() {
     let data = this.userData,
         user = this.user;
-    if (!data['first-name'] && !data['last-name'] && user.displayName) {
+    
+    if ((!data || (!data['first-name'] && !data['last-name'])) && user.displayName) {
       let names = user.displayName.split(' ');
       data['first-name'] = names.shift();
       data['last-name'] = names.join(' ');
