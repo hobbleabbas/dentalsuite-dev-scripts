@@ -5,6 +5,7 @@ const LOGGING_ENABLED = true;
 
 let App = {
   user: null,
+  userData: {},
   stagedDataForDatabase: null,
 
   signup: function(data) {
@@ -100,7 +101,7 @@ let App = {
   getDataFromDatabaseAndLoadPageData: function() {
     let dbRef = firebase.database().ref('users/' + this.user.uid);
     dbRef.once('value').then(function(snapshot) {
-      this.userData = snapshot.val() || {};
+      this.userData = snapshot.val();
       this.pullDisplayNameAndPhotoUrlFromGoogleSignin();
       this.loadPageData();
     }.bind(this)).catch(logError);
