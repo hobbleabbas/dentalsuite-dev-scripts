@@ -90,7 +90,7 @@ let App = {
     dbRef.set(this.userData, function(error) {
       if (error) {
         logError(error);
-      } else {
+      } else if (callback) {
         callback();
       }
     }.bind(this));
