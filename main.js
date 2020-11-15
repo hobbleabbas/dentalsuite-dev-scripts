@@ -146,21 +146,23 @@ let App = {
     this.authGuard();
   },
   hideLoadingScreen: function() {
-    scrollToTop();
-    this.$loadingScreenTop.animate(
-      {top: -window.innerHeight},
-      LOADING_SCREEN_DELAY,
-      function() {
-        this.$loadingScreenTop.toggle(false);
-      }.bind(this)
-    );
-    this.$loadingScreenBottom.animate(
-      {top: window.innerHeight},
-      LOADING_SCREEN_DELAY,
-      function() {
-        this.$loadingScreenBottom.toggle(false);
-      }.bind(this)
-    );
+    setTimeout(function() {
+      scrollToTop();
+      this.$loadingScreenTop.animate(
+        {top: -window.innerHeight},
+        LOADING_SCREEN_DELAY,
+        function() {
+          this.$loadingScreenTop.toggle(false);
+        }.bind(this)
+      );
+      this.$loadingScreenBottom.animate(
+        {top: window.innerHeight},
+        LOADING_SCREEN_DELAY,
+        function() {
+          this.$loadingScreenBottom.toggle(false);
+        }.bind(this)
+      );
+    }.bind(this), 0);
   },
   authGuard: function() {
     if ((this.isSigninPage() || this.isSignupPage()) && this.user) {
