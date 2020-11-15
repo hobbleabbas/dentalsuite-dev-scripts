@@ -17,7 +17,7 @@ let App = {
   },
   signin: function(data) {
     let persistence;
-    if (data.remember) {
+    if (data.checkbox) {
       persistence = firebase.auth.Auth.Persistence.LOCAL;
     } else {
       persistence = firebase.auth.Auth.Persistence.SESSION;
