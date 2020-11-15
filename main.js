@@ -147,7 +147,7 @@ let App = {
     this.authGuard();
   },
   hideLoadingScreen: function() {
-    window.scrollTo(0, 0);
+    scrollToTop();
     this.$loadingScreenTop.animate(
       {top: -window.innerHeight},
       LOADING_SCREEN_DELAY,
@@ -480,6 +480,7 @@ let App = {
       setTimeout(function() {
         this.$success.toggle(false);
         $(form).toggle(true);
+        scrollToTop();
       }.bind(this), SUCCESS_MESSAGE_DELAY);
     }.bind(this));
   },
@@ -525,6 +526,10 @@ function logError(error) {
   } else {
     console.error(error);
   }
+}
+
+function scrollToTop() {
+  window.scrollTo(0, 0);
 }
 
 function getFormData(form) {
