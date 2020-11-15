@@ -475,6 +475,8 @@ let App = {
     event.preventDefault();
     let form = event.currentTarget;
     let data = getFormData(form);
+    this.$success = $(form).siblings('.success-message');
+    this.$error = $(form).siblings('.error-message');
     this.putDataInDatabase(data, function() {
       setTimeout(function() {
         this.$success.toggle(false);
