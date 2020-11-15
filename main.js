@@ -72,14 +72,13 @@ let App = {
     this.loadPageData();
   },
 
-  putFileInStorage: function(file) {
+  putFileInStorage: function(file, callback) {
     let storageRef = firebase.storage().ref();
     let path = `avatars/${this.user.uid}`;
     let avatarRef = storageRef.child(path);
     avatarRef.put(file).then(function(snapshot) {
       avatarRef.getDownloadURL().then(function(url) {
-        this.putDataInDatabase({photoURL: url});
-        this.displaySuccess('Avatar has been updated.');
+        this.putDataInDatabase({photoURL: url}, callback);
       }.bind(this)).catch(logError);
     }.bind(this)).catch(logError);
   },
