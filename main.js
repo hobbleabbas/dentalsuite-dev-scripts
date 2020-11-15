@@ -476,7 +476,12 @@ let App = {
     event.preventDefault();
     let form = event.currentTarget;
     let data = getFormData(form);
-    this.putDataInDatabase(data);
+    this.putDataInDatabase(data, function() {
+      setTimeout(function() {
+        this.$success.toggle(false);
+        $(form).toggle(true);
+      }.bind(this), SUCCESS_MESSAGE_DELAY);
+    }.bind(this));
   },
 
   init: function() {
