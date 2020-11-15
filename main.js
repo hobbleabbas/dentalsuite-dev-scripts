@@ -79,6 +79,7 @@ let App = {
     avatarRef.put(file).then(function(snapshot) {
       avatarRef.getDownloadURL().then(function(url) {
         this.putDataInDatabase({photoURL: url});
+        this.displaySuccess('Avatar has been updated.');
       }.bind(this)).catch(logError);
     }.bind(this)).catch(logError);
   },
@@ -297,6 +298,7 @@ let App = {
     this.$aboutBio = $('#about-bio');
 
     // profile edit
+    this.$avatarForm = $('#avatar-form');
     this.$editProfileForm = $('#wf-form-profile');
     this.$editPhotoUpload = $('#photo-upload');
     this.$editFirstName = $('#edit-first-name');
@@ -330,6 +332,7 @@ let App = {
       this.$signinGoogleButton.click(this.handleGoogleSignin.bind(this));
       this.$forgotPasswordLink.click(this.handleForgotPasswordReset.bind(this));
     } else if (this.isProfilePage()) {
+      this.$avatarForm.submit(this.handleAvatarUpload.bind(this));
       this.$editProfileForm.submit(this.handleProfileEdit.bind(this));
     } else if (this.isAccountSettingsPage()) {
       this.$changeEmailButton.click(this.showChangeEmailModal.bind(this));
@@ -460,23 +463,20 @@ let App = {
     event.preventDefault();
     this.signinGoogle();
   },
+  handleAvatarUpload: function(event) {
+    event.preventDefault();
+    let form = event.currentTarget;
+    this.$success = $(form).siblings('.success-message');
+    this.$error = $(form).siblings('.error-message');
+    let data = getFormData(form);
+    let file = data['photo-upload'];
+    this.putFileInStorage(file);
+  },
   handleProfileEdit: function(event) {
     event.preventDefault();
     let form = event.currentTarget;
     let data = getFormData(form);
-    this.extractAndProcessPhotoFromFormData(data);
-    this.putDataInDatabase(data, function() {
-      setTimeout(function () {
-        location.reload();
-      }, SUCCESS_MESSAGE_DELAY);
-    });
-  },
-  extractAndProcessPhotoFromFormData: function(data) {
-    if (data['photo-upload'].name) {
-      let file = data['photo-upload'];
-      this.putFileInStorage(file);
-      delete data['photo-upload'];
-    }
+    this.putDataInDatabase(data);
   },
 
   init: function() {
