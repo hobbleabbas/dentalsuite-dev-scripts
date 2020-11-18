@@ -1,7 +1,7 @@
 const SUCCESS_MESSAGE_DELAY = 1000;
 const AUTH_STATE_DELAY = 1000;
 const LOADING_SCREEN_DELAY = 500;
-const LOGGING_ENABLED = true;
+const LOGGING_ENABLED = false;
 
 let App = {
   user: null,
@@ -497,8 +497,7 @@ let App = {
 };
 
 $(function() {
-  window.app = App.init(); // development
-  // App.init();  // production
+  window.app = App.init();
 });
 
 function redirect(path) {
